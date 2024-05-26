@@ -1,0 +1,24 @@
+## 开始执行... 2023-09-04 18:30:00
+
+
+🔔京东CK检测, 开始!
+
+====================共0个京东账号Cookie=========
+
+==================脚本执行- 北京时间(UTC+8)：9/4/2023, 18:30:00=====================
+
+KingRan 频道通知：https://t.me/KingRan521
+
+云服务器IP须知：域名前缀为 'lzdz' 的禁用勿跑容易黑号
+
+
+❗️京东CK检测, 错误!
+HTTPError: Response code 401 (Unauthorized)
+    at onResponse (/ql/data/scripts/node_modules/.pnpm/got@11.5.1/node_modules/got/dist/source/as-promise/index.js:142:28)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+🔔京东CK检测, 结束! 🕛 0.137 秒
+
+
+
+## 执行结束... 2023-09-04 18:30:00  耗时 1 秒　　　　　

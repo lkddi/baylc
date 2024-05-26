@@ -1,0 +1,9 @@
+## 开始执行... 2023-09-28 10:20:00
+
+Traceback (most recent call last):
+  File "/ql/data/scripts/KingRan_KR/jd_disable.py", line 14, in <module>
+    import requests
+ModuleNotFoundError: No module named 'requests'
+
+
+## 执行结束... 2023-09-28 10:20:00  耗时 1 秒　　　　　
