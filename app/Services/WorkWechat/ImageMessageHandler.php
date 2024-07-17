@@ -29,18 +29,12 @@ class ImageMessageHandler implements MessageHandlerInterface
                 //图片消息保存到数据库
                 $data = $message_data;
                 $data['cdn'] = json_encode($message_data['cdn']);
+                $data['path'] = $message_data['cdn']['save_path'];
+                Log::info($data);
                 WxWorkImg::create($data);
                 unset($data);
                 Log::info('图片消息保存到数据库');
 
-//                if (IfRoomid($message_data)){
-//                    $path = str_replace(':', '', $message_data['conversation_id']);
-//                }else{
-//                    $path = $message_data['sender'];
-//                }
-//                $filename = $message_data['appinfo'].'_'.$message_data['sender']. '.jpg';
-//                $message_data['save_path'] = 'c:\\cdn\\'.$path.'\\'.$filename;
-//                QyWechatData::down_img($message_data);
             }
         }
         return true;

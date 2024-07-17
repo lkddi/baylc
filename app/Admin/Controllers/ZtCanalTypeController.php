@@ -21,6 +21,8 @@ class ZtCanalTypeController extends AdminController
             $grid->column('id')->sortable();
             $grid->column('title');
             $grid->column('code');
+            $grid->column('updated_at')->datetime()->sortable();
+
             $grid->disableCreateButton();
 
             $grid->filter(function (Grid\Filter $filter) {

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthorizationsController;
 use App\Http\Controllers\Api\WeChatController;
+use App\Http\Controllers\Api\WorkImgController;
 use App\Http\Controllers\Auth\WechatLoginController;
 use App\Http\Controllers\HuangGroupController;
 use App\Http\Controllers\QunZhuanfa;
@@ -32,6 +33,9 @@ Route::any('wechat/wcf',[WeChatController::class,'api']);
 
 Route::post('qywechat',[WeChatController::class,'QyWchat']);
 
+//获取企业微信保存的群图片信息
+Route::get('workimg',[WorkImgController::class,'index']);
+Route::post('workimg/save',[WorkImgController::class,'save']);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

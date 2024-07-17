@@ -12,6 +12,7 @@ class CoreServer
     public static function handleRequest($request)
     {
         try {
+            self::WxAddUser($request);
             $handler = MessageHandlerFactory::createHandler($request['message_type']);
             return $handler->handle($request);
         } catch (Exception $e) {
@@ -19,18 +20,17 @@ class CoreServer
         }
     }
 
-    public function WxAddUser($request)
+    public static function WxAddUser($request)
     {
-        $message_data = $request['message'];
-        $user = WxWorkUser::where('sender', $message_data['sender'])->first();
-        if (!$user) {
-            $user = new WxWorkUser();
-            $user->sender = $message_data['sender'];
-            $user->name = $message_data['sender_name'];
-            $user->save();
-        }else{
-            if (!empty($message_data['sender_name']) && $user->name !== $message_data['sender_name']) {
-                $user->name = $message_data['sender_name'];
+        $messageData = $request['message'];
+        if (IfRoomid($messageData)) {
+            $user = WxWorkUser::firstOrCreate(
+                ['sender' => $messageData['sender']],
+                ['name' => $messageData['sender_name']]
+            );
+
+            if (!empty($messageData['sender_name']) && $user->name !== $messageData['sender_name']) {
+                $user->name = $messageData['sender_name'];
                 $user->save();
             }
         }

@@ -9,6 +9,7 @@ use App\Admin\Metrics\Examples\TotalWxsalesPrices;
 use App\Admin\Repositories\WxSale;
 use App\Models\WxSale as wxsales;
 use App\Models\WxUser;
+use App\Models\ZtCanalType;
 use App\Models\ZtDeptBigRegion;
 use App\Models\ZtProduct;
 use App\Models\ZtStore;
@@ -52,22 +53,12 @@ class WxSaleController extends AdminController
             $grid->model()->orderBy('id', 'desc');
             $grid->column('id')->sortable();
             $grid->column('store.deptBigRegionName')->sortable();
-            $grid->column('store.canalTypeName')->sortable();
-            $grid->column('store.title')->sortable();
+            $grid->column('store.canalCategoryName')->sortable();
+            $grid->column('store.name')->sortable();
             $grid->column('model')->sortable();
             $grid->column('quantity');
             $grid->column('amount');
-//            $grid->column('wxuser.nickname')->substr(1,20);
-            $grid->column('name')->display(function () {
-                $user = WxUser::where('wxid',$this->user)->where('group_wxid',$this->from_group)->first();
-                if ($user) {
-                    if ($user['name'] != NULL) {
-                        return $user['name'];
-                    } else {
-                        return $user['nickname'];
-                    }
-                }
-            })->substr(1,20);
+
             $grid->column('created_at')->datetime();
             //禁止插入
             $grid->disableCreateButton();
@@ -78,13 +69,13 @@ class WxSaleController extends AdminController
                 foreach ($rows as $index => &$row) {
 //                    \Log::info($row);
                     $row->{"store.deptBigRegionName"} = $row->store->deptBigRegionName??'';
-                    $row->{"store.canalTypeName"} = $row->store->canalTypeName??'';
-                    $row->{"store.title"} = $row->store->title??'';
+                    $row->{"store.canalCategoryName"} = $row->store->canalTypeName??'';
+                    $row->{"store.name"} = $row->store->title??'';
                 }
                 return $rows;
             })->filename(admin_trans_label('销售明细').'-'.date('Ymdhis',time()));
             //表格快捷搜索
-            $grid->quickSearch(['store.name', 'product.model','wxuser.nickname','store.canalTypeName','store.deptBigRegionName']);
+            $grid->quickSearch(['store.name', 'product.model','wxuser.nickname','store.canalCategoryName','store.deptBigRegionName']);
             // 启用表格异步渲染功能
             $grid->async();
 //            $grid->showRefreshButton();
@@ -97,7 +88,11 @@ class WxSaleController extends AdminController
 //            $grid->export(new ExcelExpoter());
             // 显示
             $grid->filter(function (Grid\Filter $filter) {
-                $filter->like('zt_store_code','门店名')->select(ZtStore::get()->pluck('title', 'code'));
+                $filter->equal('store.deptBigRegionName','大区')->select(ZtDeptBigRegion::get()->pluck('title', 'title'));
+//                $filter->equal('deptBigRegionName','大区')->select(ZtDeptBigRegion::get()->pluck('title', 'title'));
+
+                $filter->equal('store.canalCategoryName','渠道')->select(ZtCanalType::get()->pluck('title', 'title'));
+                $filter->like('zt_store_code','门店名')->select(ZtStore::get()->pluck('name', 'code'));
                 $filter->equal('zt_product_id','型号')->select(ZtProduct::get()->pluck('title', 'id'));
             });
 

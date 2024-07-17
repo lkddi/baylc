@@ -33,4 +33,5 @@ class RabbitMQServiceProvider extends ServiceProvider
     {
         //
     }
+
 }

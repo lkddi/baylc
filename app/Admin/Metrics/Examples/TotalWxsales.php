@@ -62,27 +62,31 @@ class TotalWxsales extends Card
                 $data = $this->summary($startOfYear, $lastOfYear, $startOfYearend, $lastOfYearend);
                 $this->content($data['sales']);
                 if ($data['sales'] >= $data['sales1']) {
-                    $this->up($data['sales'] / $data['sales1'] * 100);
+                    $this->up(round($data['sales'] / $data['sales1'] * 100, 2));
                 } else {
-                    $this->down($data['sales'] / $data['sales1'] * 100);
-                }                break;
+                    $this->down(round($data['sales'] / $data['sales1'] * 100, 2));
+                }
+                break;
             case '30':
                 $data = $this->summary($startOfMonth, $lastOfMonth, $startOfMonthend, $lastOfMonthend);
                 $this->content($data['sales']);
                 if ($data['sales'] >= $data['sales1']) {
-                    $this->up($data['sales'] / $data['sales1'] * 100);
+                    $this->up(round($data['sales'] / $data['sales1'] * 100, 2));
                 } else {
-                    $this->down($data['sales'] / $data['sales1'] * 100);
-                }                break;
+                    //保留2位小数点
+                    $this->down(round($data['sales'] / $data['sales1'] * 100, 2));
+                }
+                break;
             case '1':
             default:
                 $data = $this->summary($firstOfMonth, $startOfMonth, $firstOfMonthend, $startOfMonthend);
                 $this->content($data['sales']);
-            if ($data['sales'] >= $data['sales1']) {
-                $this->up($data['sales'] / $data['sales1'] * 100);
-            } else {
-                $this->down($data['sales'] / $data['sales1'] * 100);
-            }        }
+                if ($data['sales'] >= $data['sales1']) {
+                    $this->up(round($data['sales'] / $data['sales1'] * 100, 2));
+                } else {
+                    $this->down(round($data['sales'] / $data['sales1'] * 100, 2));
+                }
+        }
     }
 
     public function summary($start, $start1, $end, $end1)

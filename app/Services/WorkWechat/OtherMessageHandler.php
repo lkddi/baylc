@@ -11,7 +11,9 @@ class OtherMessageHandler implements MessageHandlerInterface
     public function handle($message)
     {
 
-        if ($message['message_type'] == '11154') return null;
+        // 消息类型有种，忽略指定的类型
+        $types = ['11171', '11154'];
+        if (in_array($message['message_type'], $types)) return null;
         Log::info("OtherMessageHandler");
         Log::info($message);
         if ($message['message_type'] == '11078') {

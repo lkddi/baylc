@@ -8,7 +8,7 @@ return [
         'store'=>[
             'name'=>'门店',
             'title'=>'门店',
-            'canalTypeName'=>'渠道',
+            'canalCategoryName'=>'渠道',
             'deptBigRegionName'=>'大区'
         ],
         'product'=>[

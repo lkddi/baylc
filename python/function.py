@@ -10,6 +10,11 @@ import http.cookiejar
 import datetime
 import time
 import requests
+from rabbitmq import send_message
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+# 定义一个全局线程池
+MAX_WORKERS = 5
 
 HEADERS = {
     # 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36',
@@ -57,6 +62,14 @@ def login():
             "channel": "OCC"}
     a = http_post(url, json.dumps(data))
     b = json.loads(a)
+    # {
+    #   "status": "0",
+    #   "message": "查询是否过期接口失败！",
+    #   "data": null
+    # }
+    if b['status'] == '0':
+        print(f'登录失败:{b["message"]}')
+        return
     return b['data']['userId']
     # print(a)
 
@@ -66,18 +79,79 @@ def verify(uerId):
     a = http_post('http://121.196.14.173/occ-base/verify', json.dumps(data))
 
 
+# 以下是获取销售数据部分 开始
 def retailBill(page, count):
     a = get_current_month_start_and_end(str(datetime.datetime.now()))
     starttime = unix_time(a[0]) * 1000
     starttime = 1577808000000
     endtime = unix_time(a[1]) * 1000
-    url = 'http://121.196.14.173/occ-b2b-order/b2b/retail-order-item/retail-order-detail-report-form?search_IN_organization.id=0001A110000000001TUQ&size={0}&page=0&search_AUTH_APPCODE=retailOrderDetailForm'.format(
-        count)
-    # 'http://121.196.14.173/occ-b2b-order/b2b/retail-order-item/retail-order-detail-report-form?search_IN_organization.id=0001A110000000001TUQ&size={0}&page={1}&search_AUTH_APPCODE=retailOrderDetailForm&search_GTE_purchaseDate_date={2}&search_LT_purchaseDate_date={3}'.format(count, page, starttime, endtime)
+    url = 'http://121.196.14.173/occ-b2b-order/b2b/retail-order-item/retail-order-detail-report-form?search_IN_organization.id=0001A110000000001TUQ&size={0}&page={1}&search_AUTH_APPCODE=retailOrderDetailForm'.format(
+        count,page)
+    # http://121.196.14.173/occ-b2b-order/b2b/retail-order-item/retail-order-detail-report-form?search_IN_organization.id=0001A110000000001TUQ&size=10&page=0&search_AUTH_APPCODE=retailOrderDetailForm
+
+    a = http_get(url)
+    c = json.loads(a)
+    print(f'本页总条数：{c.get("size")}')
+    return c
+    # for i in c['content']:
+    #     if len(i):
+    #         send_message(i, 'zt_sale')
+
+
+# 获取总销售数量
+def get_total_sales_number():
+    url = 'http://121.196.14.173/occ-b2b-order/b2b/retail-order-item/retail-order-detail-report-form?search_IN_organization.id=0001A110000000001TUQ&size=1&page=0&search_AUTH_APPCODE=retailOrderDetailForm'
+    a = http_get(url)
+    c = json.loads(a)
+    print(f'总条数：{c.get("totalElements")}')
+    return c.get('totalElements')
+
+
+# 以上是获取销售数据部分 结束
+
+# 以下是获取门店信息部分  开始
+def zt_store(page, count):
+    url = 'http://121.196.14.173/occ-base/base/terminal-stores/findAllItemList?size={}&page={}&search_AUTH_APPCODE=terminal'.format(
+        count, page)
     a = http_get(url)
     c = json.loads(a)
     return c
 
+
+# 获取总条数
+def zt_store_count():
+    url = 'http://121.196.14.173/occ-base/base/terminal-stores/findAllItemList?size=1&page=0&search_AUTH_APPCODE=terminal&r=0.8153153996282803'
+    a = http_get(url)
+    c = json.loads(a)
+    print(f'总条数：{c.get("totalElements")}')
+    return c.get('totalElements')
+
+
+# 以上是获取门店信息部分  结束
+
+# 以下是获取洗护顾问信息部分  开始
+def zt_promoter(page, count):
+    url = 'http://121.196.14.173/occ-base/base/promoterst?size={}&page={}&search_AUTH_APPCODE=promoter'.format(
+        count, page)
+    # url = 'http://121.196.14.173/occ-base/base/promoterst?size={}&page={}&search_AUTH_APPCODE=promoter&r=0.34054073023515663'
+    # http://121.196.14.173/occ-base/base/promoterst?size=10&page=0&search_AUTH_APPCODE=promoter&search_EQ_turnoverStatus=0&r=0.396862250309598
+    # print(url)
+    a = http_get(url)
+    c = json.loads(a)
+    print(f'第{page}页，本页总条数：{c.get("size")}')
+    return c
+
+
+# 获取洗护顾问总条数
+def get_promoter_count():
+    url = 'http://121.196.14.173/occ-base/base/promoterst?size=1&page=0&search_AUTH_APPCODE=promoter'
+    a = http_get(url)
+    c = json.loads(a)
+    print(f'总条数：{c.get("totalElements")}')
+    return c.get('totalElements')
+
+
+# 以上是获取洗护顾问信息部分  结束
 
 # 获取消息
 def redailMes():
@@ -125,6 +199,8 @@ def unix_time(dt):
 
 # 微信消息接口
 def wechatapi(data):
+    send_message(data, 'wechat_1')
+
     url = 'http://10.0.0.85:8080/api_send_message'
     datas = {
         'client_id': 1,
@@ -136,3 +212,22 @@ def wechatapi(data):
      }
     res = requests.post(url=url, data=json.dumps(datas))
     return res.text
+
+
+def count_calls(func):
+    # 创建一个计数器，并定义一个闭包函数来更新计数器并输出当前执行次数
+    calls_count = 0
+
+    def wrapper(*args, **kwargs):
+        nonlocal calls_count
+        calls_count += 1
+        print(f"当前执行次数：{calls_count} \n")
+
+        # 调用原始方法
+        result = func(*args, **kwargs)
+
+        # 返回方法的执行结果
+        return result
+
+    # 返回包装后的方法
+    return wrapper

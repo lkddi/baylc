@@ -25,23 +25,24 @@ class ZtStoreController extends AdminController
             $grid->column('id')->sortable();
             $grid->column('code');
             $grid->column('name');
-            $grid->column('title')->editable();
-            $grid->column('nickname')->editable();
-            $grid->column('canalTypeName');
+            $grid->column('storename');
+            $grid->column('nickname')->editable()->sortable();
+            $grid->column('canalCategoryName');
             $grid->column('retailName');
             $grid->column('advance')->switch()->sortable();
             $grid->column('deptRegionName');
             $grid->column('deptBigRegionName');
+            $grid->column('updated_at')->dateTime()->sortable();
             //禁止插入
             $grid->disableCreateButton();
 
             //表格快捷搜索
-            $grid->quickSearch(['name', 'title', 'canalTypeName','retailName','code']);
+            $grid->quickSearch(['name', 'storename', 'canalCategoryName','retailName','code','nickname']);
             // 默认为每页20条
             $grid->paginate(30);
             $grid->filter(function (Grid\Filter $filter) {
 //                $filter->like('name','门店名');
-                $filter->equal('canalTypeName','渠道')->select(ZtCanalType::get()->pluck('title', 'title'));
+                $filter->equal('canalCategoryName','渠道')->select(ZtCanalType::get()->pluck('title', 'title'));
                 $filter->equal('retailName','片区')->select(ZtRetail::get()->pluck('title', 'title'));
                 $filter->equal('deptRegionName','地区')->select(ZtDeptRegion::get()->pluck('title', 'title'));
                 $filter->equal('deptBigRegionName','大区')->select(ZtDeptBigRegion::get()->pluck('title', 'title'));
@@ -65,7 +66,7 @@ class ZtStoreController extends AdminController
         return Show::make($id, new ZtStore(), function (Show $show) {
             $show->field('id');
             $show->field('name');
-            $show->field('title');
+            $show->field('storename');
             $show->field('zt_id');
             $show->field('zt_channel_id');
             $show->field('zt_area_id');
@@ -84,10 +85,10 @@ class ZtStoreController extends AdminController
         return Form::make(new ZtStore(), function (Form $form) {
             $form->display('id');
             $form->text('name');
-            $form->text('title');
+            $form->text('storename');
             $form->text('nickname');
             $form->text('advance');
-            $form->text('canalTypeName');
+            $form->text('canalCategoryName');
             $form->text('retailName');
             $form->text('deptRegionName');
             $form->text('deptBigRegionName');

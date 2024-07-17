@@ -63,9 +63,9 @@ class TotalWxsalesPrices extends Card
                 $data = $this->summary($startOfYear, $lastOfYear, $startOfYearend, $lastOfYearend);
                 $this->content($data['sales']);
                 if ($data['sales'] >= $data['sales1']) {
-                    $this->up($data['sales'] / $data['sales1'] * 100);
+                    $this->up(round($data['sales'] / $data['sales1'] * 100, 2));
                 } else {
-                    $this->down($data['sales'] / $data['sales1'] * 100);
+                    $this->down(round($data['sales'] / $data['sales1'] * 100, 2));
                 }
 
                 break;
@@ -73,9 +73,9 @@ class TotalWxsalesPrices extends Card
                 $data = $this->summary($startOfMonth, $lastOfMonth, $startOfMonthend, $lastOfMonthend);
                 $this->content($data['sales']);
                 if ($data['sales'] >= $data['sales1']) {
-                    $this->up($data['sales'] / $data['sales1'] * 100);
+                    $this->up(round($data['sales'] / $data['sales1'] * 100, 2));
                 } else {
-                    $this->down($data['sales'] / $data['sales1'] * 100);
+                    $this->down(round($data['sales'] / $data['sales1'] * 100, 2));
                 }
                 break;
             case '1':
@@ -83,9 +83,9 @@ class TotalWxsalesPrices extends Card
                 $data = $this->summary($firstOfMonth, $startOfMonth, $firstOfMonthend, $startOfMonthend);
                 $this->content($data['sales']);
                 if ($data['sales'] >= $data['sales1']) {
-                    $this->up($data['sales'] / $data['sales1'] * 100);
+                    $this->up(round($data['sales'] / $data['sales1'] * 100, 2));
                 } else {
-                    $this->down($data['sales'] / $data['sales1'] * 100);
+                    $this->down(round($data['sales'] / $data['sales1'] * 100, 2));
                 }
         }
     }

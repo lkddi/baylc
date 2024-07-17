@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -14,135 +13,21 @@ return new class extends Migration
     public function up()
     {
         Schema::create('zt_sales', function (Blueprint $table) {
-            $table->string('id',32)->unique();
-            $table->string('dr',10)->nullable();
-            $table->string('ts',10)->nullable();
-            $table->string('creator',100)->nullable();
-            $table->string('creationTime',20)->nullable();
-            $table->string('modifier',100)->nullable();
-            $table->string('modifiedTime',20)->nullable();
-            $table->string('persistStatus',10)->nullable();
-            $table->string('purMachineYear',4)->nullable();
-            $table->string('purMachineMonth',2)->nullable();
-            $table->string('purMachineTime',20)->nullable();
-            $table->string('retailBillCode',100)->nullable();
-            $table->string('srcBillOrder',100)->nullable();
-            $table->string('saleTypeCode',100)->nullable();
-            $table->string('saleTypeName',100)->nullable();
-            $table->string('retailTypeCode',100)->nullable();
-            $table->string('retailTypeName',100)->nullable();
-            $table->string('ext12Code',100)->nullable();
-            $table->string('ext12Name',100)->nullable();
-            $table->string('ext11Code',100)->nullable();
-            $table->string('ext11Name',100)->nullable();
-            $table->string('salesDeptCode',100)->nullable();
-            $table->string('salesDeptName',100)->nullable();
-            $table->string('currentBusiness',100)->nullable();
-            $table->string('riscode',100)->nullable();
-            $table->string('ownerShopId',100)->nullable();
-            $table->string('ownerShopCode',100)->nullable();
-            $table->string('ownerShopName',100)->nullable()->comment('门店名');
-            $table->string('shopChannel',100)->nullable();
-            $table->string('historyTerminalTypeName',100)->nullable();
-            $table->string('currentTerminalTypeName',100)->nullable();
-            $table->string('ext14Code',100)->nullable();
-            $table->string('ext14Name',100)->nullable();
-            $table->string('ext13Code',100)->nullable();
-            $table->string('ext13Name',100)->nullable();
-            $table->string('shippingareaCode',100)->nullable();
-            $table->string('shippingareaName',100)->nullable();
-            $table->string('historyBusiness',100)->nullable();
-            $table->string('ownerCustomerId',100)->nullable();
-            $table->string('ownerCustomerCode',100)->nullable();
-            $table->string('ownerCustomerName',100)->nullable();
-            $table->string('ext20CustomerId',100)->nullable();
-            $table->string('ext20CustomeCode',100)->nullable();
-            $table->string('ext20CustomerName',100)->nullable();
-            $table->string('channelCode',100)->nullable();
-            $table->string('channelName',100)->nullable();
-            $table->string('brandId',100)->nullable();
-            $table->string('brandCode',100)->nullable();
-            $table->string('brandName',100)->nullable();
-            $table->string('goodsCategoryId',100)->nullable();
-            $table->string('goodsCategoryCode',100)->nullable();
-            $table->string('goodsCategoryName',100)->nullable();
-            $table->string('goodsType',100)->nullable();
-            $table->string('goodsSeriesId',100)->nullable();
-            $table->string('goodsSeriesCode',100)->nullable();
-            $table->string('goodsSeriesName',100)->nullable();
-            $table->string('goodsSeriesSon',100)->nullable();
-            $table->string('endStatus',100)->nullable();
-            $table->string('model',100)->nullable();
-            $table->string('amount',100)->nullable();
-            $table->string('proposeRetailPrice',100)->nullable();
-            $table->string('customerZeroAmount',100)->nullable();
-            $table->string('unitMoney',100)->nullable();
-            $table->string('companyUnitCost',100)->nullable();
-            $table->string('marketUnitCost',100)->nullable();
-            $table->string('sonProposalRetailPrice',100)->nullable();
-            $table->string('customerZeroPrice',100)->nullable();
-            $table->string('unitPrice',100)->nullable();
-            $table->string('proposalRetailPrice',100)->nullable();
-            $table->string('creatorId',100)->nullable();
-            $table->string('creatorCode',100)->nullable();
-            $table->string('creatorName',100)->nullable();
-            $table->string('accountingMethodCode',100)->nullable();
-            $table->string('accountingMethodName',100)->nullable();
-            $table->string('invoiceStates',100)->nullable();
-            $table->string('state',100)->nullable();
-            $table->string('approver',100)->nullable();
-            $table->string('approveDate',100)->nullable();
-            $table->string('machineBarCode',100)->nullable();
-            $table->string('srcBillCode',100)->nullable();
-            $table->string('serviceModeSrcCode',100)->nullable();
-            $table->string('serviceModeSrcName',100)->nullable();
-            $table->string('sendTime',100)->nullable();
-            $table->string('invoiceCode',100)->nullable();
-            $table->string('shopperName',100)->nullable();
-            $table->string('shopperPhone',100)->nullable();
-            $table->string('provinceId',100)->nullable();
-            $table->string('provinceCode',100)->nullable();
-            $table->string('provinceName',100)->nullable();
-            $table->string('cityId',100)->nullable();
-            $table->string('cityCode',100)->nullable();
-            $table->string('cityName',100)->nullable();
-            $table->string('countyId',100)->nullable();
-            $table->string('countyCode',100)->nullable();
-            $table->string('countyName',100)->nullable();
-            $table->string('townId',100)->nullable();
-            $table->string('townCode',100)->nullable();
-            $table->string('townName',100)->nullable();
-            $table->string('address',100)->nullable();
-            $table->string('creationDate',100)->nullable();
-            $table->string('saleOrgId',100)->nullable();
-            $table->string('saleOrgCode',100)->nullable();
-            $table->string('saleOrgName',100)->nullable();
-            $table->text('invoice')->nullable();
-            $table->string('srcBillId',100)->nullable();
-            $table->string('regionId',100)->nullable();
-            $table->string('regionCode',100)->nullable();
-            $table->string('regionName',100)->nullable();
-            $table->string('saleregionId',100)->nullable();
-            $table->string('saleregionCode',100)->nullable();
-            $table->string('saleregionName',100)->nullable();
-            $table->string('sliceAreaId',100)->nullable();
-            $table->string('sliceAreaCode',100)->nullable();
-            $table->string('sliceAreaName',100)->nullable();
-            $table->string('sonProposalUnitPrice',100)->nullable();
-            $table->string('proposeUnitPrice',100)->nullable();
-            $table->string('proposalUnitPrice',100)->nullable();
-            $table->string('shopperPhone1',100)->nullable();
-            $table->string('installationCode',100)->nullable();
-            $table->string('isIncludedCommission',100)->nullable();
-            $table->string('isChangeCommission',100)->nullable();
-            $table->string('isWithSingleCommission',100)->nullable();
-            $table->string('basicCommissions',100)->nullable();
-            $table->string('changeCommissions',100)->nullable();
-            $table->string('singleAmounts',100)->nullable();
-            $table->string('headRemark',100)->nullable();
-            $table->string('modifierId',100)->nullable();
-            $table->string('modifierCode',100)->nullable();
-            $table->string('modifierName',100)->nullable();
+            $table->id();
+            $table->string('tid')->nullable()->comment('中台id');
+            $table->integer('year')->nullable()->comment('年');//PUR_MACHINE_YEAR
+            $table->integer('month')->nullable()->comment('月');//PUR_MACHINE_MONTH
+            $table->string('date')->nullable()->comment('时间');//CREATIONDATE
+            $table->string('retailBillCode')->nullable()->comment('销售单号');;
+//            $table->string('saleTypeName')->nullable()->comment('销售类型');
+            $table->string('retailTypeName')->nullable()->comment('销售方式');
+            $table->string('zt_store_code')->nullable()->comment('门店编码');;
+            $table->string('ownerShopName')->nullable()->comment('门店名');
+            $table->string('model', 100)->nullable()->comment('型号');
+            $table->string('customerZeroAmount', 100)->nullable()->comment('零售价');
+            $table->string('unitPrice', 100)->nullable()->comment('卖价');
+            $table->integer('amount')->nullable()->comment('数量');
+            $table->timestamps();
         });
     }
 

@@ -6,7 +6,9 @@ namespace App\Services;
 use App\Coco\CocoException;
 use App\Models\GroupInfo;
 use App\Servers\Runserver;
+use App\Services\Rabbitmq\RabbitmqServer;
 use Exception;
+use Http;
 use Log;
 
 class QyWechatData
@@ -80,13 +82,14 @@ class QyWechatData
             'conversation_id' => $to_wxid,
             'content' => $msg,
         ];
-        echo $to_wxid . "\n";
+        self::send_iyuu($msg);
+//        $mq =new RabbitmqServer();
+//        $mq->send($data);
 //        Log::info($data);
 //        $response = array('data' => json_encode($data,JSON_UNESCAPED_UNICODE));
         // 调用Api组件
-        return self::sendSGHttp($data, 'post');
+//        return self::sendSGHttp($data, 'post');
     }
-
 
     /**
      * 下载图片
@@ -164,5 +167,33 @@ class QyWechatData
         }
         curl_close($curl);//关闭curl
         return $res;
+    }
+
+    public static function send_iyuu($text, $dest = null)
+    {
+        $url = 'https://iyuu.cn/IYUU38224Tb93f646871572f33ab03859063db6b03f5609534.send';
+        $data = array();
+        $data['text'] = $text;
+        $data['dest'] = $dest;
+        $response = Http::get($url, $data);
+    }
+
+    public static function send_work_msg($msg)
+    {
+        $url = 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=f36fc141-7a0f-43a0-84b8-234c937d1c84';
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+        ])->post($url, [
+            'msgtype' => 'text',
+            'text' => [
+                'content' => $msg
+            ],
+        ]);
+
+        if ($response->successful()) {
+            return response()->json(['message' => 'Message sent successfully!']);
+        } else {
+            return response()->json(['error' => 'Failed to send message.'], $response->status());
+        }
     }
 }

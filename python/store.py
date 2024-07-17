@@ -1,52 +1,41 @@
 # -*- coding: utf-8 -*-
 from function import *
-from mysql import *
 
 
-def zt_store(page, count):
-    url = 'http://121.196.14.173/occ-base/base/terminal-stores/findAllItemList?size={}&page={}&search_AUTH_APPCODE=terminal&search_EQ_isEnable=1&r=0.742044661484889'.format(
-        count, page)
-    # url = 'http://121.196.14.173/occ-base/base/terminal-stores/findAllItemList?size=10&page=1&search_AUTH_APPCODE=terminal&search_EQ_isEnable=1&r=0.742044661484889'
-    # print(url)
-    a = http_get(url)
-    c = json.loads(a)
-    # print(a)
-    return c
-
-
-def checkStore(data):
-    try:
-        cursor = new.cursor()
-        sql = 'select * from zt_stores where code={0}'.format(data["code"])
-        cursor.execute(sql)
-        data = cursor.fetchone()
-        print(data)
-        return data
-    except Exception as e:
-        print(e)
+@count_calls
+def send_store_message(store_data):
+    send_message(store_data, 'zt_store')
+    # print(store_data['name'])
 
 
 if __name__ == '__main__':
     # 登录
-    uerId = login()
-    # verify(uerId)
-    # 页数循序
-    for i in range(100):
-        print(i)
-        # 获取销售订单明细
-        c = zt_store(i, 50)  # 每页显示条数
-        if len(c["content"]) == 0:
-            break
-        for a in c["content"]:
-            insert_big_region(a)
-            insert_dept_region(a)
-            insert_retail(a)
-            insert_store(a)
-            insert_canal_type(a)
-            print(a['code'])
-            # checkStore(a)
+    userId = login()
+    # 设置 分页数
+    number = 50
+    MAX_WORKERS = 20
+    # 获取总条数
+    sums = zt_store_count()
 
-            # add(a)
+    all_send_futures = []
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        futures = []
+        for i in range(sums // number + 1):
+            futures.append(executor.submit(zt_store, i, number))
+
+        for future in as_completed(futures):
+            c = future.result()
+            if len(c["content"]) == 0:
+                continue
+
+            # 创建一个新的线程池来发送消息
+            with ThreadPoolExecutor(max_workers=MAX_WORKERS) as send_executor:
+                send_futures = [send_executor.submit(send_store_message, a) for a in c["content"]]
+                all_send_futures.extend(send_futures)
+
+    # 等待所有发送消息的线程完成
+    for send_future in as_completed(all_send_futures):
+        send_future.result()
 
     # 发送采集成功提示
-    wechatapi('门店信息采集完毕')
+    # wechatapi('门店信息采集完毕')

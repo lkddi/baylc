@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class ZtChannel extends Model
 {
     use HasFactory;
+
+    /**
+     * 不可批量赋值的属性。
+     *
+     * @var array
+     */
+    protected $guarded = [];
 }

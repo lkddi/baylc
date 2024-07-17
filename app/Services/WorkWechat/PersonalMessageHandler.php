@@ -22,7 +22,6 @@ class PersonalMessageHandler implements MessageHandlerInterface
         try {
             $message_data = $message['message_data'];
             $content = $message_data['content'];
-
             // 群消息处理
             if (IfRoomid($message_data)) {
                 $group = WxWork::where('roomid', $message_data['conversation_id'])->first();

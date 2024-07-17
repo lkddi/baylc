@@ -21,7 +21,7 @@ class ZtSaleController extends AdminController
      */
     protected function grid()
     {
-        return Grid::make(new ZtSale(), function (Grid $grid) {
+        return Grid::make(new ZtSale(['store']), function (Grid $grid) {
             //获取今年
 //            $grid->model()->where('purMachineYear','2024');
 //            dd($grid);
@@ -29,7 +29,7 @@ class ZtSaleController extends AdminController
 //            $grid->column('xid')->sortable();
 //            $grid->column('id')->sortable();
             $grid->column('retailBillCode')->sortable();
-            $grid->column('purMachineYear')->sortable();
+            $grid->column('year')->sortable();
 //            $grid->column('purMachineMonth')->sortable();
             $grid->column('purMachineTime')->display(function($text) {
                 return date("m-d",$text/1000);
@@ -37,15 +37,15 @@ class ZtSaleController extends AdminController
 //
             $grid->column('ownerShopName');
 //
-            $grid->column('ext12Name');
-            $grid->column('ext11Name');
-            $grid->column('ext13Name');
-            $grid->column('canalTypeName');
+            $grid->column('store.deptBigRegionName');
+            $grid->column('store.deptRegionName');
+            $grid->column('store.retailName');
+            $grid->column('store.canalCategoryName');
 
             $grid->column('model');
             $grid->column('amount');
-            $grid->column('proposeRetailPrice');
-            $grid->column('creatorName');
+            $grid->column('customerZeroAmount');
+            $grid->column('unitPrice');
 
             //禁止插入
             $grid->disableCreateButton();

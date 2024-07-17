@@ -16,11 +16,12 @@ return new class extends Migration
         Schema::create('zt_stores', function (Blueprint $table) {
             $table->id();
             $table->string('name',200)->comment('门店');
-            $table->string('facadeShort',200)->comment('门店简称');
-            $table->string('warehouseName',200)->comment('门店名称');
-            $table->string('code',10)->unique()->comment('中台id');
-            $table->string('canalCategoryCode',10)->unique()->comment('渠道编号');
-            $table->string('canalCategoryName',10)->unique()->comment('渠道名称');
+            $table->string('facadeShort',200)->nullable()->comment('渠道门店名称');
+            $table->string('warehouseName',200)->nullable()->comment('门店名称');
+            $table->string('nickname',200)->nullable()->comment('门店简称');
+            $table->string('code')->unique()->comment('门店编码');
+            $table->string('canalCategoryCode')->comment('渠道编号');
+            $table->string('canalCategoryName')->comment('渠道名称');
             $table->integer('isEnable')->nullable()->default(1)->comment('是否启用');
             $table->string('retailCode')->nullable()->comment('片区id');
             $table->string('retailName')->nullable()->comment('片区');

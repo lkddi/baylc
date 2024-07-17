@@ -13,6 +13,12 @@ class WxGroup extends Model
 {
     use HasFactory;
 
+    /**
+     * 不可批量赋值的属性。
+     *
+     * @var array
+     */
+    protected $guarded = [];
     public function store()
     {
         return $this->belongsTo(ZtStore::class);

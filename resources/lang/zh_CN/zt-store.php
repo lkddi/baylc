@@ -6,8 +6,9 @@ return [
     ],
     'fields' => [
         'name' => '门店名',
-        'title' => '简称',
-        'canalTypeName' => '渠道',
+        'storename' => '渠道名',
+        'nickname' => '简称',
+        'canalCategoryName' => '渠道',
         'retailName' => '片区',
         'advance' => '推进',
         'deptRegionName' => '地区',
