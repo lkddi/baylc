@@ -14,3 +14,14 @@ yarn-error.log
 /.idea
 /.vscode
 .DS_Store
+/python/.idea
+/python/__pycache__
+
+/storage/logs
+storage/logs/*.log
+/storage/framework/sessions
+storage/framework/sessions/*
+/storage/framework/views
+storage/framework/views/*
+/storage/framework/cache
+storage/framework/cache/*

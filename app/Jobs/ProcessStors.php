@@ -41,9 +41,6 @@ class ProcessStors implements ShouldQueue
     {
         try {
             $data = $this->data;
-            //记录日志，文件名前缀为 store
-//            Log::info('store', $data['cede']);
-//            Log::info($data);
             ZtStore::updateOrCreate(
                 [
                     'code' => $data['code'],
