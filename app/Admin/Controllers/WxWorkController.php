@@ -50,7 +50,7 @@ class WxWorkController extends AdminController
             $grid->column('isadd')->switch();
             $grid->column('chat')->switch();
             $grid->column('kucun')->switch();
-//            $grid->column('updated_at')->datetime()->sortable();
+            $grid->column('updated_at')->datetime()->sortable();
             $grid->disableCreateButton();
             $grid->export();
 //            $grid->tools(new WxWorkBotTool());

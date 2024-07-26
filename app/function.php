@@ -15,8 +15,13 @@ use App\Models\WxUser;
  */
 function IfRoomid($data): bool
 {
-    Log::info('这里是ifRoomid检查');
-    Log::info($data);
+//    Log::info('这里是ifRoomid检查');
+//    Log::info($data);
+    //检查变量是否存在
+    if (!isset($data['conversation_id'])) {
+        return false;
+    }
+
     if (Str::contains($data['conversation_id'], 'R:')) {
         return true;
     } else {

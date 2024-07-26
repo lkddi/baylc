@@ -3,6 +3,7 @@
 namespace App\Services\WorkWechat;
 
 use App\Models\WxWork;
+use App\Services\WxBot;
 use EasyWeChat\Kernel\Messages\Message;
 use Log;
 
@@ -28,6 +29,45 @@ class OtherMessageHandler implements MessageHandlerInterface
                 ]);
             }
         }
+        //机器人上线  用户登录成功通知
+        if ($message['message_type'] == '11026') {
+            WxBot::updateOrCreate(
+                [
+                    'wxid' => $message['message_data']['user_id']
+                ],
+                [
+                    'username' => $message['message_data']['username'],
+                    'online' => 1,
+                    'robot_type' => 1,
+                    'wx_headimgurl' => $message['message_data']['avatar'],
+                ]
+            );
+        }
+
+        if ($message['message_type'] == '11027') {
+            WxBot::updateOrCreate(
+                [
+                    'wxid' => $message['message_data']['user_id']
+                ],
+                [
+                    'online' => 0,
+                ]
+            );
+        }
+
+        //群列表 将群信息增加到数据库
+        if ($message['message_type'] == '11038') {
+            foreach ($message['message_data']['room_list'] as $room) {
+                WxWork::updateOrCreate(
+                    [
+                        'roomid' => $room['conversation_id']
+                    ],
+                    [
+                        'roomname' => $room['nickname'],
+                    ]);
+            }
+        }
+
 
         return null;
     }

@@ -20,7 +20,7 @@ class ImageMessageHandler implements MessageHandlerInterface
     public function handle($message)
     {
         Log::info('图片消息处理');
-        Log::info($message);
+//        Log::info($message);
         $message_data = $message['message_data'];
         if (IfRoomid($message_data)){
             $group = WxWork::where('roomid', $message_data['conversation_id'])->first();
