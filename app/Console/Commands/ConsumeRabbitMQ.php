@@ -47,6 +47,8 @@ class ConsumeRabbitMQ extends Command
             WorkMessage::create($add);
             unset($add);
             try {
+                Log::info("收到的企业微信信息");
+                Log::info($data);
                 CoreServer::handleRequest($data);
             } catch (Exception $e) {
                 echo '队列入口-异常: ' . $e->getMessage() . "\n";

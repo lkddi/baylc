@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Dcat\Admin\Traits\HasDateTimeFormatter;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class WxWorkUser extends Model
 {
-	use HasDateTimeFormatter;
+    use HasFactory;
+
+    use HasDateTimeFormatter;
     protected $table = 'wx_work_user';
 
     /**
@@ -16,5 +19,14 @@ class WxWorkUser extends Model
      *
      * @var array
      */
-    protected $guarded = [];
+    protected $guarded = [
+
+    ];
+
+    protected $fillable = [
+        // 其他已有的可填充属性
+        'sender',
+        'sender_name',
+        'nostoremsg'
+    ];
 }

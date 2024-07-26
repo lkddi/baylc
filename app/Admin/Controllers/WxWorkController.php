@@ -122,14 +122,14 @@ class WxWorkController extends AdminController
             $form->display('created_at');
             $form->display('updated_at');
 
-            $form->saved(function (Form $form) {
-                $user = $form->user;
-                $wxid = $form->model()->wxid;
-                if ($user) {
-                    EventGroupMemberAdd::GetGroupMember('wxid_pruy5b5gm0bg12', $wxid, 1);
-                }
-
-            });
+//            $form->saved(function (Form $form) {
+//                $user = $form->user;
+//                $wxid = $form->model()->wxid;
+//                if ($user) {
+//                    EventGroupMemberAdd::GetGroupMember('wxid_pruy5b5gm0bg12', $wxid, 1);
+//                }
+//
+//            });
         });
 
 

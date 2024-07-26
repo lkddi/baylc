@@ -15,6 +15,8 @@ use App\Models\WxUser;
  */
 function IfRoomid($data): bool
 {
+    Log::info('这里是ifRoomid检查');
+    Log::info($data);
     if (Str::contains($data['conversation_id'], 'R:')) {
         return true;
     } else {

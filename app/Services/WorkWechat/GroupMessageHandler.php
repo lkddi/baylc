@@ -19,8 +19,7 @@ class GroupMessageHandler implements MessageHandlerInterface
      */
     public function handle($message)
     {
-        Log::info("红包消息处理");
-        Log::info($message);
+
         $message_data = $message['message_data'];
         try {
             $group = WxWork::where('roomid', $message_data['conversation_id'])->first();

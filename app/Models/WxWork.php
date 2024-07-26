@@ -15,4 +15,5 @@ class WxWork extends Model
      * @var array
      */
     protected $guarded = [];
+
 }
