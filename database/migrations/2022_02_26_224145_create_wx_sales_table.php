@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('wx_sales', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('zt_company_id')->comment('公司id');
             $table->foreignIdFor(\App\Models\ZtStore::class)->constrained();
             $table->string('zt_store_code')->nullable()->comment('门店code');
             $table->string('model')->nullable()->comment('商品');

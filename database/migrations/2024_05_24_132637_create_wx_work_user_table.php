@@ -14,7 +14,7 @@ class CreateWxWorkUserTable extends Migration
     public function up()
     {
         Schema::create('wx_work_user', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('sender')->default('')->comment('用户id');
             $table->string('sender_name')->nullable()->comment('昵称');
             $table->string('zt_store_code')->nullable()->comment('门店编码');

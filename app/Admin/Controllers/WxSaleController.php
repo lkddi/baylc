@@ -7,8 +7,7 @@ use App\Admin\Metrics\Examples\TotalWxsaleAmounts;
 use App\Admin\Metrics\Examples\TotalWxsales;
 use App\Admin\Metrics\Examples\TotalWxsalesPrices;
 use App\Admin\Repositories\WxSale;
-use App\Models\WxSale as wxsales;
-use App\Models\WxUser;
+use App\Admin\Repositories\ZtCompany;
 use App\Models\ZtCanalType;
 use App\Models\ZtDeptBigRegion;
 use App\Models\ZtProduct;
@@ -43,12 +42,20 @@ class WxSaleController extends AdminController
      */
     protected function grid()
     {
-        return Grid::make(new WxSale(['store','wxuser']), function (Grid $grid) {
-            // 魏丽静 只能查看环京大区数据
-            if (Admin::user()->id == 5){
-                $ids = ZtDeptBigRegion::find(1)->store->pluck('id');
-                $grid->model()->whereIn('zt_store_id',$ids);
+        return Grid::make(new WxSale(['store','wxuser','company']), function (Grid $grid) {
+            if (Admin::user()->id !=1) {
+                if (Admin::user()->isRole('chengdu')) {
+                    $grid->model()->where('zt_company_id', 2);
+                } elseif (Admin::user()->isRole('beijing')) {
+                    $grid->model()->where('zt_company_id', 1);
+                }
+                // 魏丽静 只能查看环京大区数据
+                if (Admin::user()->id == 5){
+                    $ids = ZtDeptBigRegion::find(1)->store->pluck('id');
+                    $grid->model()->whereIn('zt_store_id',$ids);
+                }
             }
+
 
             $grid->model()->orderBy('id', 'desc');
             $grid->column('id')->sortable();
@@ -88,6 +95,7 @@ class WxSaleController extends AdminController
 //            $grid->export(new ExcelExpoter());
             // 显示
             $grid->filter(function (Grid\Filter $filter) {
+//                $filter->equal('company.name','分公司')->select(ZtCompany::get()->pluck('name', 'name'));
                 $filter->equal('store.deptBigRegionName','大区')->select(ZtDeptBigRegion::get()->pluck('title', 'title'));
 //                $filter->equal('deptBigRegionName','大区')->select(ZtDeptBigRegion::get()->pluck('title', 'title'));
 

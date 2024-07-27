@@ -44,6 +44,7 @@ class ProcessStors implements ShouldQueue
             ZtStore::updateOrCreate(
                 [
                     'code' => $data['code'],
+                    'zt_company_id'=>$data['company']
                 ],
                 [
                     'name' => $data['name'],
@@ -103,22 +104,21 @@ class ProcessStors implements ShouldQueue
 //                    $store->save();
 //                }
 //            }
-//            Log::info($data);
-            $this->createOrUpdateRegion(ZtDeptBigRegion::class, $data['deptBigRegionCode'], $data['deptBigRegionName']);
-            $this->createOrUpdateRegion(ZtDeptRegion::class, $data['deptRegionCode'], $data['deptRegionName']);
-            $this->createOrUpdateRegion(ZtRetail::class, $data['retailCode'], $data['retailName']);
-            $this->createOrUpdateRegion(ZtCanalType::class, $data['canalCategoryCode'], $data['canalCategoryName']);
+            $this->createOrUpdateRegion(ZtDeptBigRegion::class, $data['deptBigRegionCode'], $data['deptBigRegionName'],$data['company']);
+            $this->createOrUpdateRegion(ZtDeptRegion::class, $data['deptRegionCode'], $data['deptRegionName'],$data['company']);
+            $this->createOrUpdateRegion(ZtRetail::class, $data['retailCode'], $data['retailName'],$data['company']);
+            $this->createOrUpdateRegion(ZtCanalType::class, $data['canalCategoryCode'], $data['canalCategoryName'],$data['company']);
         } catch (\Exception $e) {
             // 捕获异常并记录日志
             Log::error('处理队列任务时发生异常：' . $e->getMessage());
         }
     }
 
-    private function createOrUpdateRegion($modelClass, $code, $name)
+    private function createOrUpdateRegion($modelClass, $code, $name,$companyid)
     {
         try {
             if (!empty($code)) {
-                $region = $modelClass::updateOrCreate(['code' => $code], ['title' => $name]);
+                $region = $modelClass::updateOrCreate(['code' => $code], ['title' => $name, 'zt_company_id' => $companyid]);
 //                echo $name . ' 添加成功' . PHP_EOL;
             }
         } catch (\Exception $e) {

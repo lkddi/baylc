@@ -39,7 +39,7 @@ class ConsumeRabbitMQStore extends Command
                 try {
                     $data = json_decode($msg->body, true);
                     echo '收到消息: ' . now() . "\n";
-
+//                    echo '消息内容: ' . $msg->body . "\n";
                     ProcessStors::dispatch($data);
                     $channel->basic_ack($msg->getDeliveryTag());
                 } catch (\Exception $e) {

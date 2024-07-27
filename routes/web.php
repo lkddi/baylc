@@ -2,6 +2,7 @@
 
 use App\Imports\ImportSalesstarget;
 use App\Jobs\ProcessRabbitMQMessage;
+use App\Jobs\ProcessStors;
 use App\Jobs\WorkDownImgJob;
 use App\Models\HuangGroup;
 use App\Models\HuangTarget;
@@ -10,6 +11,7 @@ use App\Models\WxSale;
 use App\Models\WxSalestarget;
 use App\Models\WxWork;
 use App\Models\WxWorkImg;
+use App\Models\WxWorkUser;
 use App\Models\ZtDeptBigRegion;
 use App\Models\ZtGati;
 use App\Services\CoreServer;
@@ -37,9 +39,10 @@ Route::get('/', [\App\Http\Controllers\VlwController::class, 'index']);
 
 Route::get('/t', function () {
 
-
-
-//    return WxWorkImg::create($message['message_data']);
+//    $sales = WxWork::find(1);
+//
+//    print_r($sales->company);
+    dd(Admin::user()->permissions);
 });
 
 

@@ -2,13 +2,10 @@
 
 namespace App\Admin\Controllers;
 
+use Admin;
 use App\Admin\Extensions\Tools\WxGroupsUser;
-use App\Admin\Grid\Tools\WxWorkBotTool;
-use App\Models\WxUser;
 use App\Models\WxWork;
-use App\Models\ZtDeptBigRegion;
-use App\Models\ZtRetail;
-use App\Wechats\EventGroupMemberAdd;
+use App\Models\ZtCompany;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Show;
@@ -24,25 +21,25 @@ class WxWorkController extends AdminController
      */
     protected function grid()
     {
-        return Grid::make(new WxWork(), function (Grid $grid) {
+        return Grid::make(new WxWork(['company']), function (Grid $grid) {
 //            $grid->model()->orderBy('id', 'desc');
 //            $grid->model()->orderBy('robot_wxid', 'desc');
 //            $grid->model()->orderBy('admin_wxid', 'desc');
+            if (Admin::user()->id !=1) {
+                if (Admin::user()->isRole('chengdu')) {
+                    $grid->model()->where('zt_company_id', 2);
+                } elseif (Admin::user()->isRole('beijing')) {
+                    $grid->model()->where('zt_company_id', 1);
+                }
+            }
+
             $grid->model()->orderBy('retailCode', 'desc');
 //            $grid->column('bot.username');
+//            $grid->column('company.name');
+            if (Admin::user()->id ==1) $grid->column('zt_company_id');
             $grid->column('roomid');
             $grid->column('roomname')->editable();
-//            $grid->column('retail.title');
-//            $grid->column('adminname')->display(function () {
-//                $user = WxUser::where('wxid',$this->admin_wxid)->where('group_wxid',$this->wxid)->first();
-//                if ($user) {
-//                    if ($user['name'] != NULL) {
-//                        return $user['name'];
-//                    } else {
-//                        return $user['nickname'];
-//                    }
-//                }
-//            });
+//            if (Admin::user()->id ==1) $grid->column('company.name');
             $grid->column('user')->switch();
             $grid->column('photo')->switch();
             $grid->column('advance')->switch();
@@ -64,10 +61,11 @@ class WxWorkController extends AdminController
 //                new WxGroupsUser('更新群成员信息', 1)
             ]);
             //表格快捷搜索
-            $grid->quickSearch(['wxid', 'username']);
+            $grid->quickSearch(['wxid', 'username','company.name']);
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('wxid');
                 $filter->equal('title');
+                $filter->equal('company.name');
 
             });
         });
@@ -86,6 +84,7 @@ class WxWorkController extends AdminController
             $show->field('id');
             $show->field('wxid');
             $show->field('title');
+            $show->field('zt_company_id');
             $show->field('admin');
             $show->field('user');
             $show->field('ischeck');
@@ -107,9 +106,7 @@ class WxWorkController extends AdminController
             $form->display('id');
             $form->text('roomid');
             $form->text('roomname');
-//            $form->select('admin_wxid')->options(WxUser::where('group_wxid', $form->model()->wxid)->pluck('nickname', 'wxid'));
-//            $form->select('retailCode')->options(ZtRetail::get()->pluck('title', 'code'));
-//            $form->select('deptBigRegionCode')->options(ZtDeptBigRegion::get()->pluck('title', 'code'));
+            $form->select('zt_company_id')->options(ZtCompany::get()->pluck('name', 'id'));
             $form->switch('ischeck');
             $form->switch('user');
             $form->switch('photo');

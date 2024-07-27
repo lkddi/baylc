@@ -13,6 +13,7 @@ use App\Admin\Controllers\WxSalestargetController;
 use App\Admin\Controllers\WxUserController;
 use App\Admin\Controllers\WxWorkController;
 use App\Admin\Controllers\WxWorkUserController;
+use App\Admin\Controllers\ZtCompanyController;
 use App\Admin\Controllers\ZtGatiController;
 use App\Admin\Controllers\ZtProductController;
 use App\Admin\Controllers\ZtStoreController;
@@ -62,6 +63,7 @@ Route::group([
         'runinggroup' =>RuningGroupController::class,
         'runtarget' =>RuningTargetController::class,
         'workuser'=>WxWorkUserController::class,
+        'company'=>ZtCompanyController::class,
 
 
     ]);

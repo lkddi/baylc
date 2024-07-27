@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use Admin;
 use App\Admin\Repositories\ZtStore;
 use App\Models\ZtCanalType;
 use App\Models\ZtDeptBigRegion;
@@ -22,6 +23,15 @@ class ZtStoreController extends AdminController
     protected function grid()
     {
         return Grid::make(new ZtStore(), function (Grid $grid) {
+
+            if (Admin::user()->id !=1) {
+                if (Admin::user()->isRole('chengdu')) {
+                    $grid->model()->where('zt_company_id', 2);
+                } elseif (Admin::user()->isRole('beijing')) {
+                    $grid->model()->where('zt_company_id', 1);
+                }
+
+            }
             $grid->column('id')->sortable();
             $grid->column('code');
             $grid->column('name');

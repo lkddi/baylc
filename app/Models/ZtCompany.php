@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ZtStore extends Model
+class ZtCompany extends Model
 {
     use HasFactory;
+
     /**
      * 不可批量赋值的属性。
      *
@@ -15,13 +16,10 @@ class ZtStore extends Model
      */
     protected $guarded = [];
 
-    public function big()
+    public function stores()
     {
-        return $this->belongsTo(ZtDeptBigRegion::class,'title','deptBigRegionName');
+        return $this->hasMany(ZtStore::class);
     }
 
-    public function wxsales()
-    {
-        return $this->hasMany(WxSale::class);
-    }
+
 }

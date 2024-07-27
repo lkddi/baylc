@@ -16,4 +16,17 @@ class WxWork extends Model
      */
     protected $guarded = [];
 
+    public function WorkUsers()
+    {
+//        return $this->belongsToMany(WxUserWork::class);
+        return $this->belongsToMany(WxWorkUser::class, 'wx_work_wx_work_user', 'wx_work_id', 'wx_work_user_id');
+
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(ZtCompany::class, 'zt_company_id','id');
+    }
+
+
 }

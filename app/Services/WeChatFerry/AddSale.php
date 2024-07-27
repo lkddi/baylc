@@ -34,6 +34,7 @@ class AddSale
             $wxSale = new WxSale();
             $wxSale->model = $models->title;
             $wxSale->zt_product_id = $models->id;
+            $wxSale->zt_company_id = $store->zt_company_id;
             $wxSale->zt_store_id = $store->id;
             $wxSale->zt_store_code = $store->code;
             $wxSale->quantity = $num;

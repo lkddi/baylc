@@ -31,4 +31,9 @@ class WxSale extends Model
 
     }
 
+    public function company()
+    {
+        return $this->belongsTo(ZtCompany::class,'zt_company_id','id');
+    }
+
 }

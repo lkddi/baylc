@@ -33,4 +33,6 @@ class ZtSale extends Model
         return $this->belongsTo(ZtReward::class,'model','model');
     }
 
+
+
 }

@@ -2,10 +2,10 @@
 
 namespace App\Admin\Repositories;
 
-use App\Models\WxSale as Model;
+use App\Models\ZtCompany as Model;
 use Dcat\Admin\Repositories\EloquentRepository;
 
-class WxSale extends EloquentRepository
+class ZtCompany extends EloquentRepository
 {
     /**
      * Model.
@@ -13,7 +13,4 @@ class WxSale extends EloquentRepository
      * @var string
      */
     protected $eloquentClass = Model::class;
-
-
-
 }

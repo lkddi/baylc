@@ -13,12 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        //片区
-        Schema::create('zt_retails', function (Blueprint $table) {
+        Schema::create('zt_companies', function (Blueprint $table) {
             $table->id();
-            $table->string('title',20);
-            $table->string('code',20)->unique();
-            $table->unsignedBigInteger('zt_company_id')->comment('公司id');
+            $table->string('name', 200)->comment('公司名称');
             $table->timestamps();
         });
     }
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('zt_retails');
+        Schema::dropIfExists('zt_companies');
     }
 };

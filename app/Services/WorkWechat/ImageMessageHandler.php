@@ -25,16 +25,13 @@ class ImageMessageHandler implements MessageHandlerInterface
         if (IfRoomid($message_data)){
             $group = WxWork::where('roomid', $message_data['conversation_id'])->first();
             if ($group && $group->photo){
-                Log::info('群聊图片消息处理-开启');
                 //图片消息保存到数据库
                 $data = $message_data;
                 $data['cdn'] = json_encode($message_data['cdn']);
                 $data['path'] = $message_data['cdn']['save_path'];
-                Log::info($data);
                 WxWorkImg::create($data);
                 unset($data);
                 Log::info('图片消息保存到数据库');
-
             }
         }
         return true;

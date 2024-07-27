@@ -15,7 +15,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # 定义一个全局线程池
 MAX_WORKERS = 5
-
 HEADERS = {
     # 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36',
     'Content-Type': 'application/json; charset=UTF-8',
@@ -52,14 +51,24 @@ def http_get(url):
 
 
 # 登陆
-def login():
+def login(login_user=None):
     url = 'http://121.196.14.173/wbalone/user/yhtLogin'
-    data = {"username": "18347940286",
+    if login_user is None:
+        username = '18347940286'
+        password2 = '9b8f5c3e3064599807ad042395a7b929d0472e06'
+        password1 = '078cfdfed302c3d200c78f543e59bb5a'
+    else:
+        username = '18081058833'
+        password2 = '48efc4851e15940af5d477d3c0ce99211a70a3be'
+        password1 = '5416d7cd6ef195a0f7622a9c56b55e84'
+
+    data = {"username": username,
             "password": "",
-            "password2": "9b8f5c3e3064599807ad042395a7b929d0472e06",
-            "password1": "078cfdfed302c3d200c78f543e59bb5a",
+            "password2": password2,
+            "password1": password1,
             "productCode": "OCC,CRM",
             "channel": "OCC"}
+
     a = http_post(url, json.dumps(data))
     b = json.loads(a)
     # {
@@ -69,6 +78,7 @@ def login():
     # }
     if b['status'] == '0':
         print(f'登录失败:{b["message"]}')
+        print(f'登录失败:{data}')
         return
     return b['data']['userId']
     # print(a)
@@ -86,7 +96,7 @@ def retailBill(page, count):
     starttime = 1577808000000
     endtime = unix_time(a[1]) * 1000
     url = 'http://121.196.14.173/occ-b2b-order/b2b/retail-order-item/retail-order-detail-report-form?search_IN_organization.id=0001A110000000001TUQ&size={0}&page={1}&search_AUTH_APPCODE=retailOrderDetailForm'.format(
-        count,page)
+        count, page)
     # http://121.196.14.173/occ-b2b-order/b2b/retail-order-item/retail-order-detail-report-form?search_IN_organization.id=0001A110000000001TUQ&size=10&page=0&search_AUTH_APPCODE=retailOrderDetailForm
 
     a = http_get(url)
@@ -209,7 +219,7 @@ def wechatapi(data):
             'conversation_id': 'S:7881302503935047_1688855282355755',
             'content': data,
         },
-     }
+    }
     res = requests.post(url=url, data=json.dumps(datas))
     return res.text
 

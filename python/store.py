@@ -1,16 +1,36 @@
 # -*- coding: utf-8 -*-
 from function import *
+import sys
+
+LOGIN_USER = None
 
 
 @count_calls
 def send_store_message(store_data):
+    global LOGIN_USER
+    # 向 数据里面增加 一个字段值
+    store_data['company'] = LOGIN_USER
+    # 发送消息
     send_message(store_data, 'zt_store')
     # print(store_data['name'])
 
 
 if __name__ == '__main__':
-    # 登录
-    userId = login()
+    args = sys.argv[1:]
+    # 检查是否有参数传递
+    if args:
+        # 获取第一个参数
+        first_arg = args[0]
+
+        if first_arg == '1':
+            # 登录
+            userId = login(1)
+            LOGIN_USER = 2
+
+    else:
+        userId = login()
+        LOGIN_USER = 1
+
     # 设置 分页数
     number = 50
     MAX_WORKERS = 20

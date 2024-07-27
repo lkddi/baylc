@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('zt_stores', function (Blueprint $table) {
             $table->id();
             $table->string('name',200)->comment('门店');
+            $table->unsignedBigInteger('zt_company_id')->comment('公司id');
             $table->string('facadeShort',200)->nullable()->comment('渠道门店名称');
             $table->string('warehouseName',200)->nullable()->comment('门店名称');
             $table->string('nickname',200)->nullable()->comment('门店简称');

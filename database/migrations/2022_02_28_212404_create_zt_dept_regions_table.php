@@ -18,6 +18,7 @@ return new class extends Migration
             $table->id();
             $table->string('title',20);
             $table->string('code',20)->unique();
+            $table->unsignedBigInteger('zt_company_id')->comment('公司id');
             $table->timestamps();
         });
     }
