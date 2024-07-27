@@ -37,6 +37,13 @@ class CoreServer
                             $user->sender_name = $messageData['sender_name'];
                             $user->save();
                         }
+
+                        // 判断用户是否已存在 不存在则创建 关联关系
+                        $existingWorkUsers = $work->WorkUsers->pluck('id')->toArray();
+                        if (!in_array($user->id, $existingWorkUsers)) {
+                            $work->WorkUsers()->attach($user);
+                        }
+
                     }
                 } else {
                     WxWork::create([
