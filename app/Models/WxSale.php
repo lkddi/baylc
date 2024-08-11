@@ -2,15 +2,10 @@
 
 namespace App\Models;
 
+use Admin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * @mixin IdeHelperWxSale
- * @property mixed $zt_store_code
- * @property mixed $from_group
- * @property mixed $from_wxid
- */
 class WxSale extends Model
 {
     use HasFactory;
@@ -34,6 +29,20 @@ class WxSale extends Model
     public function company()
     {
         return $this->belongsTo(ZtCompany::class,'zt_company_id','id');
+    }
+
+    public function checkcompany()
+    {
+        if (Admin::user()->id !=1) {
+            if (Admin::user()->isRole('chengdu')) {
+                return $this->where('zt_company_id', 2);
+            } elseif (Admin::user()->isRole('beijing')) {
+                return $this->where('zt_company_id', 1);
+            }
+        }else{
+            return $this;
+        }
+
     }
 
 }

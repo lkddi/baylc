@@ -6,7 +6,16 @@
 
 use App\Models\WxGroup;
 use App\Models\WxUser;
+use App\Services\QyWechatData;
 
+
+/**
+ * @return void
+ */
+function sendIyuu($text,$desp=null)
+{
+    QyWechatData::send_iyuu($text, $desp);
+}
 
 /**
  * 判断是否是群聊

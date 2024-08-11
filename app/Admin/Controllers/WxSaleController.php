@@ -9,8 +9,10 @@ use App\Admin\Metrics\Examples\TotalWxsalesPrices;
 use App\Admin\Repositories\WxSale;
 use App\Admin\Repositories\ZtCompany;
 use App\Models\ZtCanalType;
+use App\Models\ZtDeptRegion;
 use App\Models\ZtDeptBigRegion;
 use App\Models\ZtProduct;
+use App\Models\ZtRetail;
 use App\Models\ZtStore;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -60,6 +62,8 @@ class WxSaleController extends AdminController
             $grid->model()->orderBy('id', 'desc');
             $grid->column('id')->sortable();
             $grid->column('store.deptBigRegionName')->sortable();
+            $grid->column('store.deptRegionName')->sortable();
+            $grid->column('store.retailName')->sortable();
             $grid->column('store.canalCategoryName')->sortable();
             $grid->column('store.name')->sortable();
             $grid->column('model')->sortable();
@@ -77,12 +81,14 @@ class WxSaleController extends AdminController
 //                    \Log::info($row);
                     $row->{"store.deptBigRegionName"} = $row->store->deptBigRegionName??'';
                     $row->{"store.canalCategoryName"} = $row->store->canalTypeName??'';
+                    $row->{"store.deptRegionName"} = $row->store->deptRegionName??'';
+                    $row->{"store.retailName"} = $row->store->retailName??'';
                     $row->{"store.name"} = $row->store->title??'';
                 }
                 return $rows;
             })->filename(admin_trans_label('销售明细').'-'.date('Ymdhis',time()));
             //表格快捷搜索
-            $grid->quickSearch(['store.name', 'product.model','wxuser.nickname','store.canalCategoryName','store.deptBigRegionName']);
+            $grid->quickSearch(['store.name', 'product.model','wxuser.nickname','store.canalCategoryName','store.deptBigRegionName','store.retailName']);
             // 启用表格异步渲染功能
             $grid->async();
 //            $grid->showRefreshButton();
@@ -96,11 +102,13 @@ class WxSaleController extends AdminController
             // 显示
             $grid->filter(function (Grid\Filter $filter) {
 //                $filter->equal('company.name','分公司')->select(ZtCompany::get()->pluck('name', 'name'));
-                $filter->equal('store.deptBigRegionName','大区')->select(ZtDeptBigRegion::get()->pluck('title', 'title'));
+                $filter->equal('store.deptBigRegionName','大区')->select(ZtDeptBigRegion::Company()->pluck('title', 'title'));
+                $filter->equal('store.deptRegionName','地区')->select(ZtDeptRegion::Company()->pluck('title', 'title'));
+                $filter->equal('store.retailName','片区')->select(ZtRetail::Company()->pluck('title', 'title'));
 //                $filter->equal('deptBigRegionName','大区')->select(ZtDeptBigRegion::get()->pluck('title', 'title'));
 
-                $filter->equal('store.canalCategoryName','渠道')->select(ZtCanalType::get()->pluck('title', 'title'));
-                $filter->like('zt_store_code','门店名')->select(ZtStore::get()->pluck('name', 'code'));
+                $filter->equal('store.canalCategoryName','渠道')->select(ZtCanalType::Company()->pluck('title', 'title'));
+                $filter->like('zt_store_code','门店名')->select(ZtStore::Company()->pluck('name', 'code'));
                 $filter->equal('zt_product_id','型号')->select(ZtProduct::get()->pluck('title', 'id'));
             });
 

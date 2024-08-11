@@ -19,52 +19,6 @@ class QyWechatData
      */
 
 
-//    public function handleType11042($data)
-//    {
-//        return true;
-//    }
-//
-//    public function handleType11044($data)
-//    {
-//        return true;
-//    }
-
-    // 添加更多处理方法...
-//11028   [登录二维码通知.md](登录/登录二维码通知.md)
-//11174  [登录二维码状态通知.md](登录/登录二维码状态通知.md)
-//11024 [接口就绪通知.md](登录/接口就绪通知.md)
-//11179  [用户登录成功通知（含公司名称）.md](登录/用户登录成功通知（含公司名称）.md)
-//11026  [用户登录成功通知(无公司名称).md](登录/用户登录成功通知(无公司名称).md)
-//11027  [用户退出通知.md](登录/用户退出通知.md)
-//#### 好友
-//11173  [被删除通知.md](好友/被删除通知.md)
-//11077  [好友删除通知.md](好友/好友删除通知.md)
-//11063  [好友申请通知.md](好友/好友申请通知.md)
-//11076  [好友新增通知.md](好友/好友新增通知.md)
-//#### 界面
-//11095  [弹窗消息.md](界面/弹窗消息.md)
-//##### 群聊
-//11073  [群成员减少通知.md](群聊/群成员减少通知.md)
-//11072  [群成员增加通知.md](群聊/群成员增加通知.md)
-//11078  [群名称变化通知.md](群聊/群名称变化通知.md)
-//11074  [新增群通知.md](群聊/新增群通知.md)
-//11075  [主动退群通知.md](群聊/主动退群通知.md)
-//##### 消息
-//11123  [撤回消息通知.md](消息/撤回消息通知.md)
-//11049 [红包消息.md](消息/红包消息.md)
-//11047 [链接消息.md](消息/链接消息.md)
-//11050 [名片消息.md](消息/名片消息.md)
-//11124 [视频号消息.md](消息/视频号消息.md)
-//11043  [视频消息.md](消息/视频消息.md)
-//11042  [图片消息.md](消息/图片消息.md)
-//11068  [图文消息.md](消息/图文消息.md)
-//11046 [位置消息.md](消息/位置消息.md)
-//11041  [文本消息.md](消息/文本消息.md)
-//11045  [文件消息.md](消息/文件消息.md)
-//11066  [小程序消息.md](消息/小程序消息.md)
-//11044  [语音消息.md](消息/语音消息.md)
-//11048  [GIF消息.md](消息/GIF消息.md)
-//11051 未知
     /**
      * 发送文字消息(好友或者群)
      *
@@ -74,7 +28,7 @@ class QyWechatData
      */
     public static function send_text_msg($to_wxid, $msg)
     {
-        // 封装返回数据结构
+// 封装返回数据结构
         $data = array();
         $data['client_id'] = 1;
         $data['message_type'] = 11154;             // Api数值（可以参考 - api列表demo）
@@ -82,6 +36,7 @@ class QyWechatData
             'conversation_id' => $to_wxid,
             'content' => $msg,
         ];
+        self::send_work_msg($msg);
         self::send_iyuu($msg);
 //        $mq =new RabbitmqServer();
 //        $mq->send($data);
@@ -91,6 +46,30 @@ class QyWechatData
 //        return self::sendSGHttp($data, 'post');
     }
 
+    public static function send_work_join($url)
+    {
+        $data = array();
+        $data['client_id'] = 1;
+        $data['message_type'] = 11080;
+        $data['params'] = [
+            'invite_url' => $url,
+        ];
+        $mq =new RabbitmqServer();
+        $mq->send($data);
+    }
+
+    public static function send_work_add_friend($user_id, $corp_id)
+    {
+        $data = array();
+        $data['client_id'] = 1;
+        $data['message_type'] = 11064;
+        $data['params'] = [
+            'user_id' => $user_id,
+            'corp_id' => $corp_id,
+        ];
+        $mq =new RabbitmqServer();
+        $mq->send($data);
+    }
     /**
      * 下载图片
      *

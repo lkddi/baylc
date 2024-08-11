@@ -20,6 +20,7 @@ class CreateWxWorkImgTable extends Migration
             $table->string('cdn_type')->nullable()->comment('cdn类型');
             $table->string('content_type')->nullable();
             $table->string('conversation_id')->nullable()->comment('群id');
+            $table->unsignedBigInteger('zt_company_id')->comment('公司id');
             $table->string('is_pc')->nullable();
             $table->string('receiver')->nullable();
             $table->string('send_time')->nullable()->comment('发送时间');

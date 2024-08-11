@@ -9,7 +9,10 @@ return [
             'name'=>'门店',
             'title'=>'门店',
             'canalCategoryName'=>'渠道',
-            'deptBigRegionName'=>'大区'
+            'deptBigRegionName'=>'大区',
+            'retailName'=>'片区',
+            'deptRegionName'=>'地区',
+
         ],
         'product'=>[
             'model'=>'型号'

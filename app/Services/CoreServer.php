@@ -68,7 +68,10 @@ class CoreServer
     {
         $messageData = $data['message_data'];
         $user = WxWorkUser::firstOrCreate(
-            ['sender' => $messageData['sender']],
+            [
+                'sender' => $messageData['sender'],
+                'zt_company_id'=>$work->zt_company_id,
+            ],
             ['sender_name' => $messageData['sender_name']]
         );
 

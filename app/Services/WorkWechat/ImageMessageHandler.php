@@ -29,6 +29,7 @@ class ImageMessageHandler implements MessageHandlerInterface
                 $data = $message_data;
                 $data['cdn'] = json_encode($message_data['cdn']);
                 $data['path'] = $message_data['cdn']['save_path'];
+                $data['zt_company_id'] = $group->zt_company_id;
                 WxWorkImg::create($data);
                 unset($data);
                 Log::info('图片消息保存到数据库');

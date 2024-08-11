@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('wx_works', function (Blueprint $table) {
             $table->id();
             $table->string('roomid',50)->unique()->comment('群id');
+            $table->unsignedBigInteger('zt_company_id')->comment('公司id');
             $table->string('roomname',100)->nullable()->comment('群名');
             $table->integer('user')->default(0)->comment('登记用户');
             $table->integer('ischeck')->default(0)->comment('是否开启查库存');

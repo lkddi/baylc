@@ -42,7 +42,7 @@ Route::get('/t', function () {
 //    $sales = WxWork::find(1);
 //
 //    print_r($sales->company);
-    dd(Admin::user()->permissions);
+//    QyWechatData::send_work_add_friend('7881300016178716','1688856965630846');
 });
 
 
