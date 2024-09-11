@@ -31,18 +31,15 @@ class WxSale extends Model
         return $this->belongsTo(ZtCompany::class,'zt_company_id','id');
     }
 
-    public function checkcompany()
+    public function scopeCompany($query)
     {
-        if (Admin::user()->id !=1) {
+        if (Admin::user()->id != 1) {
             if (Admin::user()->isRole('chengdu')) {
-                return $this->where('zt_company_id', 2);
+                return $query->where('zt_company_id', '2');
             } elseif (Admin::user()->isRole('beijing')) {
-                return $this->where('zt_company_id', 1);
+                return $query->where('zt_company_id', '1');
             }
-        }else{
-            return $this;
         }
-
     }
 
 }

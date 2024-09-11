@@ -5,16 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ZtProduct extends Model
+class WxUserList extends Model
 {
     use HasFactory;
 
     /**
-     * 不可批量赋值的属性。
+     * 不可被批量赋值的属性。
      *
      * @var array
      */
     protected $guarded = [];
-
-
 }

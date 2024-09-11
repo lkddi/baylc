@@ -23,7 +23,7 @@ class ZtProductController extends AdminController
             $grid->model()->orderBy('id', 'desc');
             $grid->column('title');
             $grid->column('model');
-            $grid->column('price');
+            $grid->column('price')->editable()->sortable();
             $grid->column('ticheng');
             $grid->column('offline')->switch();
 //            $grid->column('created_at');
@@ -31,7 +31,8 @@ class ZtProductController extends AdminController
 
             //禁止插入
 //            $grid->disableCreateButton();
-
+            //启用数据导出
+            $grid->export();
             //表格快捷搜索
             $grid->quickSearch(['model', 'title']);
             // 默认为每页20条

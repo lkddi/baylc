@@ -1,6 +1,10 @@
 <?php
 
 use App\Http\Controllers\Api\AuthorizationsController;
+use App\Http\Controllers\Api\BotController;
+use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\SaleListController;
+use App\Http\Controllers\Api\StoreController;
 use App\Http\Controllers\Api\WeChatController;
 use App\Http\Controllers\Api\WorkImgController;
 use App\Http\Controllers\Auth\WechatLoginController;
@@ -94,4 +98,14 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 Route::any('tel', [AuthorizationsController::class, 'tel']);
 
+Route::any('work',function (Request $request){
+    Log::info($request->all());
+});
 
+
+Route::get('wx/salelist',[SaleListController::class,'index']);
+Route::post('product/add',[ProductController::class,'create']);
+Route::get('store',[StoreController::class,'index']);
+Route::post('store',[StoreController::class,'save']);
+
+Route::apiResource('bot',BotController::class);

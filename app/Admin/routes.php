@@ -5,17 +5,21 @@ use App\Admin\Controllers\RuningGroupController;
 use App\Admin\Controllers\RuningTargetController;
 use App\Admin\Controllers\StockPileController;
 use App\Admin\Controllers\WarehouseController;
+use App\Admin\Controllers\WokeApiController;
 use App\Admin\Controllers\WxbotController;
 use App\Admin\Controllers\WxForwardController;
 use App\Admin\Controllers\WxGroupController;
 use App\Admin\Controllers\WxRewardController;
+use App\Admin\Controllers\WxSaleController;
 use App\Admin\Controllers\WxSalestargetController;
 use App\Admin\Controllers\WxUserController;
+use App\Admin\Controllers\WxUserListController;
 use App\Admin\Controllers\WxWorkController;
 use App\Admin\Controllers\WxWorkUserController;
 use App\Admin\Controllers\ZtCompanyController;
 use App\Admin\Controllers\ZtGatiController;
 use App\Admin\Controllers\ZtProductController;
+use App\Admin\Controllers\ZtSaleController;
 use App\Admin\Controllers\ZtStoreController;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
@@ -64,6 +68,9 @@ Route::group([
         'runtarget' =>RuningTargetController::class,
         'workuser'=>WxWorkUserController::class,
         'company'=>ZtCompanyController::class,
+        'wokeapi'=>WokeApiController::class,
+        'wxuserlist'=>WxUserListController::class,
+
 
 
     ]);

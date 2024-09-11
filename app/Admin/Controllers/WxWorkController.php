@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use Admin;
 use App\Admin\Extensions\Tools\WxGroupsUser;
+use App\Admin\Grid\Tools\WxWorkBotTool;
 use App\Models\WxWork;
 use App\Models\ZtCompany;
 use Dcat\Admin\Form;
@@ -22,20 +23,11 @@ class WxWorkController extends AdminController
     protected function grid()
     {
         return Grid::make(new WxWork(['company']), function (Grid $grid) {
-//            $grid->model()->orderBy('id', 'desc');
-//            $grid->model()->orderBy('robot_wxid', 'desc');
-//            $grid->model()->orderBy('admin_wxid', 'desc');
             if (Admin::user()->id !=1) {
-                if (Admin::user()->isRole('chengdu')) {
-                    $grid->model()->where('zt_company_id', 2);
-                } elseif (Admin::user()->isRole('beijing')) {
-                    $grid->model()->where('zt_company_id', 1);
-                }
+                $grid->model()->company();
             }
 
             $grid->model()->orderBy('retailCode', 'desc');
-//            $grid->column('bot.username');
-//            $grid->column('company.name');
             if (Admin::user()->id ==1) $grid->column('zt_company_id');
             $grid->column('roomid');
             $grid->column('roomname')->editable();
@@ -47,10 +39,13 @@ class WxWorkController extends AdminController
             $grid->column('isadd')->switch();
             $grid->column('chat')->switch();
             $grid->column('kucun')->switch();
+            $grid->column('new')->switch();
             $grid->column('updated_at')->datetime()->sortable();
             $grid->disableCreateButton();
             $grid->export();
-//            $grid->tools(new WxWorkBotTool());
+            $grid->tools(new WxWorkBotTool());
+
+
 
             // 禁用删除按钮
 //            $grid->disableDeleteButton();

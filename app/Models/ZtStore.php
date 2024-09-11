@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class ZtStore extends Model
 {
     use HasFactory;
+
     /**
      * 不可批量赋值的属性。
      *
@@ -18,7 +19,7 @@ class ZtStore extends Model
 
     public function big()
     {
-        return $this->belongsTo(ZtDeptBigRegion::class,'title','deptBigRegionName');
+        return $this->belongsTo(ZtDeptBigRegion::class, 'title', 'deptBigRegionName');
     }
 
     public function wxsales()
@@ -36,5 +37,10 @@ class ZtStore extends Model
                 return $query->where('zt_company_id', '1');
             }
         }
+    }
+
+    public function scopeEnable($query)
+    {
+        return $query->where('isEnable', '1');
     }
 }

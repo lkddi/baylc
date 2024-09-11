@@ -13,6 +13,10 @@ return [
         'advance' => '推进',
         'deptRegionName' => '地区',
         'deptBigRegionName' => '大区',
+        'isEnable'=>'状态',
+        'warehouseName'=>'名称',
+        'code'=>'编号',
+        'riscode'=>'ris编码'
     ],
     'options' => [
     ],

@@ -2,12 +2,13 @@
 
 namespace App\Admin\Grid\Tools;
 
-use App\Models\WxWork;
+use App\Models\WxBot;
+use App\Servers\WxUserListServer;
 use App\Services\QyWechatData;
 use Dcat\Admin\Grid\Tools\AbstractTool;
 use Illuminate\Http\Request;
 
-class WxWorkBotTool extends AbstractTool
+class WxUserListTool extends AbstractTool
 {
     /**
      * 按钮样式定义，默认 btn btn-white waves-effect
@@ -24,7 +25,7 @@ class WxWorkBotTool extends AbstractTool
      */
     public function title()
     {
-        return ' 企业群数据更新';
+        return '更新好友列表';
     }
 
     /**
@@ -38,7 +39,7 @@ class WxWorkBotTool extends AbstractTool
 //        return '您确定要发送新的提醒消息吗？';
 
         // 显示标题和内容
-        return ['您确定要更新企业群信息？', ''];
+        return ['您确定要更新好友信息？', ''];
     }
 
     /**
@@ -49,10 +50,8 @@ class WxWorkBotTool extends AbstractTool
      */
     public function handle(Request $request)
     {
-
-//        WxWork::update(['new'=>0]);
-        WxWork::where('id', '>=', 1)->update(['new' => 0]);
-        QyWechatData::get_rooms();
+        QyWechatData::get_inner_contacts();
+        QyWechatData::get_external_contacts();
         return $this->response()->success('更新成功!')->refresh();
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Services\WorkWechat;
 
+use App\Exceptions\WokeException;
 use App\Models\WxGroup;
 use App\Models\WxWork;
 use App\Services\WeChatFerry\AddSale;
@@ -30,14 +31,14 @@ class GroupMessageHandler implements MessageHandlerInterface
                 $remarkParts = explode(' ', $message_data['remark']);
                 if (count($remarkParts) >= 3) {
                     $num = isset($remarkParts[3]) && $remarkParts[3] !== '' ? $remarkParts[3] : 1;
-                    AddSale::AddSale($message_data['conversation_id'], $remarkParts[0], $remarkParts[1], $remarkParts[2], $num);
+                    AddSale::AddSale($message_data, $remarkParts[0], $remarkParts[1], $remarkParts[2], $num,$message_data['sender_name']);
                 }
 //                }
             }
             // 处理群消息的逻辑
 
 
-        } catch (Exception $e) {
+        } catch (WokeException $e) {
             throw $e;
         }
         // 处理文本消息的逻辑

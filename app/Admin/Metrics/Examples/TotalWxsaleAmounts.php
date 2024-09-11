@@ -88,16 +88,16 @@ class TotalWxsaleAmounts extends Card
 
     public function summary($start, $start1, $end, $end1)
     {
-//        $sales = WxSale::whereBetween('created_at', [$start, $end])->sum('amount');
-//        $sales1 = WxSale::whereBetween('created_at', [$start1, $end1])->sum('amount');
+        $sales = WxSale::whereBetween('created_at', [$start, $end])->company()->sum('amount');
+        $sales1 = WxSale::whereBetween('created_at', [$start1, $end1])->company()->sum('amount');
 
-        if (Admin::user()->isRole('chengdu')){
-            $sales = WxSale::whereBetween('created_at', [$start, $end])->where('zt_company_id', '2')->sum('amount');
-            $sales1 = WxSale::whereBetween('created_at', [$start1, $end1])->where('zt_company_id', '2')->sum('amount');
-        }elseif (Admin::user()->isRole('beijing')){
-            $sales = WxSale::whereBetween('created_at', [$start, $end])->where('zt_company_id',  '1')->sum('amount');
-            $sales1 = WxSale::whereBetween('created_at', [$start1, $end1])->where('zt_company_id', '=', '1')->sum('amount');
-        }
+//        if (Admin::user()->isRole('chengdu')){
+//            $sales = WxSale::whereBetween('created_at', [$start, $end])->where('zt_company_id', '2')->sum('amount');
+//            $sales1 = WxSale::whereBetween('created_at', [$start1, $end1])->where('zt_company_id', '2')->sum('amount');
+//        }elseif (Admin::user()->isRole('beijing')){
+//            $sales = WxSale::whereBetween('created_at', [$start, $end])->where('zt_company_id',  '1')->sum('amount');
+//            $sales1 = WxSale::whereBetween('created_at', [$start1, $end1])->where('zt_company_id', '=', '1')->sum('amount');
+//        }
         $sales1 = $sales1 == 0 ? 1 : $sales1;
         $data['sales'] = $sales;
         $data['sales1'] = $sales1;

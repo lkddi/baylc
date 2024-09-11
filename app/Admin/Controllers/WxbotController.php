@@ -47,7 +47,7 @@ class WxbotController extends AdminController
             $grid->column('group')->switch();
             $grid->column('transfer')->switch();
 //            $grid->column('apiurl');
-            $grid->column('token');
+            $grid->column('clientId')->editable();
 //            $grid->column('created_at');
             $grid->column('updated_at')->datetime()->sortable();
 
@@ -102,7 +102,7 @@ class WxbotController extends AdminController
             $form->text('group');
             $form->text('transfer');
             $form->text('apiurl');
-            $form->text('token');
+            $form->text('clientId');
 
             $form->display('created_at');
             $form->display('updated_at');

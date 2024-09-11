@@ -1,6 +1,8 @@
 <?php
+
 namespace App\Services\WeChatFerry;
 
+use App\Exceptions\WokeException;
 use App\Models\WxGroup;
 use App\Models\WxSale;
 use App\Models\WxWork;
@@ -12,25 +14,38 @@ use Exception;
 class AddSale
 {
     /**
-     * @param string $group 群id
+     * @param array $data 机器人收到信息
      * @param string $storename 门店名称
      * @param string $model 型号
      * @param int $amount 提成
-     * @param  $num 数量
+     * @param int  $num 数量
      * @return void
      * @throws Exception
      */
-    public static function AddSale($group,$storename,$model,$amount, $num=1)
+    public static function AddSale($data, $storename, $model, $amount, $num = 1, $user = null)
     {
+        \Log::info('增加数据处理中...');
+        if ($data['sender_name']) {
+            $msg = '[' . $data['sender_name'] . ']:';
+        } else {
+
+            $msg = '';
+        }
+        $group = $data['conversation_id'];
         try {
-            $models = self::checkmodel($model);
-            if (!$models){
-                throw new Exception('商品不存在:'.$model);
-            }
             $store = self::checkstore($storename);
-            if (!$store){
-                throw new Exception('门店不存在:'.$storename.'请尽快核实!！');
+            if (!$store) {
+                $mess['send_user']=1;
+                $mess['data'] = $msg . '门店不存在:' . $storename . '登录系统后台查看门店清，或者联系管理员!！';
+                throw new WokeException('ok',$mess);
             }
+            $models = self::checkmodel($model);
+            if (!$models) {
+                $mess['send_user']=1;
+                $mess['data'] = $msg . '商品不存在:' . $model .'如果型号没有错误，那请联系管理增加型号';
+                throw new WokeException('ok',$mess);
+            }
+
             $wxSale = new WxSale();
             $wxSale->model = $models->title;
             $wxSale->zt_product_id = $models->id;
@@ -41,6 +56,7 @@ class AddSale
             $wxSale->amount = $amount;
             $wxSale->price = $models->price;
             $wxSale->from_group = $group;
+            $wxSale->from_wxid = $data['sender'];
             $wxSale->save();
 
             //操作库存
@@ -49,8 +65,14 @@ class AddSale
             if ($groups && $groups['kucun']) {
                 Server::reduceStore($store->code, $models->id, $num);
             }
-            throw new Exception($storename.'销售 '.$model.' '.$num.'台,登记成功');
-        } catch (Exception $e) {
+//            \Log::info($store->zt_company_id);
+            $massage = $msg . "门店:[".$storename . '] 销售 ' . $model . ' ' . $num . '台,登记成功!';
+            $company = $store->zt_company_id;
+
+            $mess['send_user']=0;
+            $mess['data'] = $msg . "门店:[".$storename . '] 销售 ' . $model . ' ' . $num . '台,登记成功!';
+            throw new WokeException('ok',$mess, $company);
+        } catch (WokeException $e) {
             throw $e;
         }
 
@@ -59,12 +81,12 @@ class AddSale
 
     public static function checkmodel($model)
     {
-       $models = ZtProduct::where('model', $model)->first();
-         if ($models) {
-              return $models;
-            }else {
-                return false;
-            }
+        $models = ZtProduct::where('model', $model)->first();
+        if ($models) {
+            return $models;
+        } else {
+            return false;
+        }
     }
 
     public static function checkstore($name)
@@ -72,7 +94,7 @@ class AddSale
         $models = ZtStore::where('nickname', $name)->first();
         if ($models) {
             return $models;
-        }else {
+        } else {
             return false;
         }
     }

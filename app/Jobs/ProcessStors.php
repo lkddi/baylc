@@ -58,6 +58,8 @@ class ProcessStors implements ShouldQueue
                     'warehouseName' => $data['warehouseName'],
                     'canalCategoryCode' => $data['canalCategoryCode'],
                     'canalCategoryName' => $data['canalCategoryName'],
+                    'canalTypeName' => $data['canalTypeName'],
+//                    'canalTypeCode' => $data['canalTypeCode'],
                     'isEnable' => $data['isEnable'],
                     'riscode' => $data['riscode'],
                     'storename' => $data['storename'],
@@ -107,7 +109,7 @@ class ProcessStors implements ShouldQueue
             $this->createOrUpdateRegion(ZtDeptBigRegion::class, $data['deptBigRegionCode'], $data['deptBigRegionName'],$data['company']);
             $this->createOrUpdateRegion(ZtDeptRegion::class, $data['deptRegionCode'], $data['deptRegionName'],$data['company']);
             $this->createOrUpdateRegion(ZtRetail::class, $data['retailCode'], $data['retailName'],$data['company']);
-            $this->createOrUpdateRegion(ZtCanalType::class, $data['canalCategoryCode'], $data['canalCategoryName'],$data['company']);
+            $this->createOrUpdateRegion(ZtCanalType::class, $data['canalTypeCode'], $data['canalTypeName'],$data['company']);
         } catch (\Exception $e) {
             // 捕获异常并记录日志
             Log::error('处理队列任务时发生异常：' . $e->getMessage());

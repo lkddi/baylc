@@ -15,8 +15,11 @@ class ZtStoreResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'text'=>$this->name,
-            'key'=>$this->code,
+            'id'=>$this->id,
+            'name'=>$this->name,
+            'nickname'=>$this->nickname,
+            'storename'=>$this->storename,
+            'code'=>$this->code,
         ];
     }
 }

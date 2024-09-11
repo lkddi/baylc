@@ -28,15 +28,16 @@ class WxSaleController extends AdminController
     public function index(Content $content)
     {
         return $content
-            ->header('表格')
-            ->description('表格功能展示')
+            ->header('销售明细')
+            ->description('销售登记明细')
             ->body(function (Row $row) {
-                $row->column(4, new TotalWxsales());
-                $row->column(4, new TotalWxsaleAmounts());
-                $row->column(4, new TotalWxsalesPrices());
+//                $row->column(4, new TotalWxsales());
+//                $row->column(4, new TotalWxsaleAmounts());
+//                $row->column(4, new TotalWxsalesPrices());
             })
             ->body($this->grid());
     }
+
     /**
      * Make a grid builder.
      *
@@ -44,18 +45,14 @@ class WxSaleController extends AdminController
      */
     protected function grid()
     {
-        return Grid::make(new WxSale(['store','wxuser','company']), function (Grid $grid) {
-            if (Admin::user()->id !=1) {
-                if (Admin::user()->isRole('chengdu')) {
-                    $grid->model()->where('zt_company_id', 2);
-                } elseif (Admin::user()->isRole('beijing')) {
-                    $grid->model()->where('zt_company_id', 1);
-                }
+        return Grid::make(new WxSale(['store', 'wxuser', 'company']), function (Grid $grid) {
+            if (Admin::user()->id != 1) {
+                $grid->model()->company();
                 // 魏丽静 只能查看环京大区数据
-                if (Admin::user()->id == 5){
-                    $ids = ZtDeptBigRegion::find(1)->store->pluck('id');
-                    $grid->model()->whereIn('zt_store_id',$ids);
-                }
+//                if (Admin::user()->id == 5){
+//                    $ids = ZtDeptBigRegion::find(1)->store->pluck('id');
+//                    $grid->model()->whereIn('zt_store_id',$ids);
+//                }
             }
 
 
@@ -69,7 +66,13 @@ class WxSaleController extends AdminController
             $grid->column('model')->sortable();
             $grid->column('quantity');
             $grid->column('amount');
-
+            // 添加不存在的字段
+            $grid->column('提成金额')->display(function () {
+                return $this->quantity * $this->amount;
+            });
+            $grid->column('销售金额')->display(function () {
+                return $this->quantity * $this->price;
+            });
             $grid->column('created_at')->datetime();
             //禁止插入
             $grid->disableCreateButton();
@@ -79,16 +82,18 @@ class WxSaleController extends AdminController
             $grid->export()->rows(function (Collection $rows) {
                 foreach ($rows as $index => &$row) {
 //                    \Log::info($row);
-                    $row->{"store.deptBigRegionName"} = $row->store->deptBigRegionName??'';
-                    $row->{"store.canalCategoryName"} = $row->store->canalTypeName??'';
-                    $row->{"store.deptRegionName"} = $row->store->deptRegionName??'';
-                    $row->{"store.retailName"} = $row->store->retailName??'';
-                    $row->{"store.name"} = $row->store->title??'';
+                    $row->{"store.deptBigRegionName"} = $row->store->deptBigRegionName ?? '';
+                    $row->{"store.canalCategoryName"} = $row->store->canalTypeName ?? '';
+                    $row->{"store.deptRegionName"} = $row->store->deptRegionName ?? '';
+                    $row->{"store.retailName"} = $row->store->retailName ?? '';
+                    $row->{"store.name"} = $row->store->title ?? '';
+                    $row->{"提成金额"} = $row->quantity * $row->amount ?? '';
+                    $row->{"销售金额"} = $row->quantity * $row->price ?? '';
                 }
                 return $rows;
-            })->filename(admin_trans_label('销售明细').'-'.date('Ymdhis',time()));
+            })->filename(admin_trans_label('销售明细') . '-' . date('Ymdhis', time()));
             //表格快捷搜索
-            $grid->quickSearch(['store.name', 'product.model','wxuser.nickname','store.canalCategoryName','store.deptBigRegionName','store.retailName']);
+            $grid->quickSearch(['store.name', 'product.model', 'wxuser.nickname', 'store.canalCategoryName', 'store.deptBigRegionName', 'store.retailName']);
             // 启用表格异步渲染功能
             $grid->async();
 //            $grid->showRefreshButton();
@@ -102,14 +107,16 @@ class WxSaleController extends AdminController
             // 显示
             $grid->filter(function (Grid\Filter $filter) {
 //                $filter->equal('company.name','分公司')->select(ZtCompany::get()->pluck('name', 'name'));
-                $filter->equal('store.deptBigRegionName','大区')->select(ZtDeptBigRegion::Company()->pluck('title', 'title'));
-                $filter->equal('store.deptRegionName','地区')->select(ZtDeptRegion::Company()->pluck('title', 'title'));
-                $filter->equal('store.retailName','片区')->select(ZtRetail::Company()->pluck('title', 'title'));
+                $filter->equal('store.deptBigRegionName', '大区')->select(ZtDeptBigRegion::Company()->pluck('title', 'title'));
+                $filter->equal('store.deptRegionName', '地区')->select(ZtDeptRegion::Company()->pluck('title', 'title'));
+                $filter->equal('store.retailName', '片区')->select(ZtRetail::Company()->pluck('title', 'title'));
 //                $filter->equal('deptBigRegionName','大区')->select(ZtDeptBigRegion::get()->pluck('title', 'title'));
 
-                $filter->equal('store.canalCategoryName','渠道')->select(ZtCanalType::Company()->pluck('title', 'title'));
-                $filter->like('zt_store_code','门店名')->select(ZtStore::Company()->pluck('name', 'code'));
-                $filter->equal('zt_product_id','型号')->select(ZtProduct::get()->pluck('title', 'id'));
+                $filter->equal('store.canalCategoryName', '渠道')->select(ZtCanalType::Company()->pluck('title', 'title'));
+                $filter->like('zt_store_code', '门店名')->select(ZtStore::Company()->pluck('name', 'code'));
+                $filter->equal('zt_product_id', '型号')->select(ZtProduct::get()->pluck('title', 'id'));
+                $filter->between('created_at')->date();
+
             });
 
 //            $grid->footer(function ($collection) use ($grid) {
@@ -143,8 +150,8 @@ class WxSaleController extends AdminController
             $show->field('zt_product_id');
             $show->field('quantity');
             $show->field('amount');
-            $show->field('cjdata');
-            $show->field('user');
+//            $show->field('cjdata');
+//            $show->field('user');
             $show->field('created_at');
             $show->field('updated_at');
         });
@@ -163,8 +170,8 @@ class WxSaleController extends AdminController
             $form->text('zt_product_id');
             $form->text('quantity');
             $form->text('amount');
-            $form->text('cjdata');
-            $form->text('user');
+//            $form->text('cjdata');
+//            $form->text('user');
 
             $form->display('created_at');
             $form->display('updated_at');

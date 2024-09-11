@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\WokeException;
 use App\Models\WorkMessage;
 use App\Models\WxWork;
 use App\Models\WxWorkUser;
@@ -16,7 +17,7 @@ class CoreServer
             self::WxWork($request);
             $handler = MessageHandlerFactory::createHandler($request['message_type']);
             return $handler->handle($request);
-        } catch (Exception $e) {
+        } catch (WokeException $e) {
             throw $e;
         }
     }
@@ -31,7 +32,7 @@ class CoreServer
                     if ($work->user) {
                         self::addUser($request, $work);
                     }
-                    if ($work->chat){
+                    if ($work->chat) {
                         self::saveMessage($request);
                     }
                 } else {
@@ -40,7 +41,7 @@ class CoreServer
                     ]);
                 }
             }
-        } catch (Exception $e) {
+        } catch (WokeException $e) {
             throw $e;
         }
         return true;
@@ -51,26 +52,26 @@ class CoreServer
         try {
             $add = $data;
             $add['message_data'] = json_encode($data['message_data']);
-//            $data['message_data'] = json_encode($data);
+            //            $data['message_data'] = json_encode($data);
             // 信息类型type 如果是11187,11123,11051 则不保存到数据库,也不操作
             if (in_array($data['message_type'], [11187, 11123, 11051])) {
                 return;
             }
-//            WorkMessage::create($add);
+            //            WorkMessage::create($add);
             unset($add);
-        }catch (Exception $e){
+        } catch (WokeException $e) {
             throw $e;
         }
     }
 
 
-    public static function addUser($data,WxWork $work)
+    public static function addUser($data, WxWork $work)
     {
         $messageData = $data['message_data'];
         $user = WxWorkUser::firstOrCreate(
             [
                 'sender' => $messageData['sender'],
-                'zt_company_id'=>$work->zt_company_id,
+                'zt_company_id' => $work->zt_company_id,
             ],
             ['sender_name' => $messageData['sender_name']]
         );

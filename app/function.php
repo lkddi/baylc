@@ -8,14 +8,40 @@ use App\Models\WxGroup;
 use App\Models\WxUser;
 use App\Services\QyWechatData;
 
+function getToUser($data)
+{
+    if (strpos($data['conversation_id'], 'R:') !== false) {
+        return $data['conversation_id'];
+    } else {
+        return $data['conversation_id'];
+    }
+}
 
 /**
  * @return void
  */
-function sendIyuu($text,$desp=null)
+function sendIyuu($text, $desp = null)
 {
     QyWechatData::send_iyuu($text, $desp);
 }
+
+
+function checkAndPrepend($code, $num = 4, $prefix = '增加')
+{
+    $parts = explode(' ', $code);
+    // 检查第一个部分是否为"新增"
+
+    if ($parts[0] !== $prefix) {
+        return false;
+    }
+    // 检查是否有至少4个部分（"新增", 门店名称, 型号, 金额）
+    if (count($parts) < $num) {
+        return false;
+    }
+    return true;
+
+}
+
 
 /**
  * 判断是否是群聊
@@ -37,6 +63,7 @@ function IfRoomid($data): bool
         return false;
     }
 }
+
 /**
  * 群 管理 确认
  * @param $group_wid
@@ -129,7 +156,9 @@ function checkStoreSend($wxid)
     }
     return false;
 }
-function checkGroupSend($group_wxid){
+
+function checkGroupSend($group_wxid)
+{
     $users = [
         '19370116010@chatroom',
         '18082030339@chatroom',
@@ -140,6 +169,7 @@ function checkGroupSend($group_wxid){
     }
     return false;
 }
+
 /**
  * 查找用户的归属的门店名字
  * @param $wxid
@@ -166,6 +196,7 @@ function checkQuyu($code)
         return 'salesDeptCode';
     }
 }
+
 function formatTime($timevalue)
 {
     if (strpos($timevalue, "-")) {
@@ -176,7 +207,6 @@ function formatTime($timevalue)
 }
 
 /**
-
  * Created by PhpStorm.
  * User: 萧逸
  * Date: 2017/6/20
@@ -184,7 +214,6 @@ function formatTime($timevalue)
  *
  * 在使用 PHP 做简单的爬虫的时候，我们经常会遇到需要下载远程图片的需求，所以下面来简单实现这个需求。
  */
-
 class Spider
 {
     //定义下载图片 用于发送url
@@ -200,7 +229,7 @@ class Spider
         $file = curl_exec($ch);
         curl_close($ch);
         //返回文件路径的信息
-        $this->saveAsImage($url,$file,$path);
+        $this->saveAsImage($url, $file, $path);
     }
 
     //保存图片
@@ -213,7 +242,6 @@ class Spider
         fwrite($resource, $file);
         fclose($resource);
     }
-
 
 
 }

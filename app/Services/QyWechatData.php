@@ -3,10 +3,8 @@
 namespace App\Services;
 
 
-use App\Coco\CocoException;
-use App\Models\GroupInfo;
-use App\Servers\Runserver;
 use App\Services\Rabbitmq\RabbitmqServer;
+use Cache;
 use Exception;
 use Http;
 use Log;
@@ -26,50 +24,132 @@ class QyWechatData
      * @param string $msg 消息内容
      * @return string json_string
      */
-    public static function send_text_msg($to_wxid, $msg)
+    public static function send_text_msg($to_wxid, $msg, $company_id = 2)
     {
 // 封装返回数据结构
         $data = array();
-        $data['client_id'] = 1;
-        $data['message_type'] = 11154;             // Api数值（可以参考 - api列表demo）
+        $data['client_id'] = Cache::get('client_id');
+        $data['message_type'] = 11029;             // Api数值（可以参考 - api列表demo）
         $data['params'] = [
             'conversation_id' => $to_wxid,
             'content' => $msg,
         ];
-        self::send_work_msg($msg);
-        self::send_iyuu($msg);
-//        $mq =new RabbitmqServer();
-//        $mq->send($data);
+        $mess = [
+            "guid" => Cache::get('client_id'),
+            "conversation_id" => $to_wxid,
+            "content" => $msg
+        ];
+        self::send_work_api($mess,'/msg/send_text');
+//        Log::info('消息发送记录');
 //        Log::info($data);
-//        $response = array('data' => json_encode($data,JSON_UNESCAPED_UNICODE));
-        // 调用Api组件
-//        return self::sendSGHttp($data, 'post');
+        self::send_work_msg($msg, $company_id);
+//        self::send_iyuu($msg);
+
+    }
+
+    public static function send_mq_msg($to_wxid, $msg)
+    {
+        $data = array();
+        $data['client_id'] = Cache::get('client_id');
+        $data['message_type'] = 11029;             // Api数值（可以参考 - api列表demo）
+        $data['params'] = [
+            'conversation_id' => $to_wxid,
+            'content' => $msg,
+        ];
+        $mq = new RabbitmqServer();
+        $mq->send($data);
     }
 
     public static function send_work_join($url)
     {
         $data = array();
-        $data['client_id'] = 1;
+        $data['client_id'] = Cache::get('client_id');
         $data['message_type'] = 11080;
         $data['params'] = [
             'invite_url' => $url,
         ];
-        $mq =new RabbitmqServer();
+        $mq = new RabbitmqServer();
         $mq->send($data);
     }
 
     public static function send_work_add_friend($user_id, $corp_id)
     {
         $data = array();
-        $data['client_id'] = 1;
+        $data['client_id'] = Cache::get('client_id');
         $data['message_type'] = 11064;
         $data['params'] = [
             'user_id' => $user_id,
             'corp_id' => $corp_id,
         ];
-        $mq =new RabbitmqServer();
+        $mq = new RabbitmqServer();
         $mq->send($data);
     }
+
+
+    /**
+     * 获取同事人信息
+     * page\_num 是第几页，从1开始
+     * page\_size 是每页获取多少数据
+     * @return void
+     */
+    public static function get_inner_contacts()
+    {
+        $data = array();
+        $data['client_id'] = Cache::get('client_id');
+        $data['message_type'] = 11036;
+        $data['params'] = [
+            'page_num' => 1,
+            'page_size' => 500,
+        ];
+        $mq = new RabbitmqServer();
+        $mq->send($data);
+    }
+
+    /**
+     * 获取客户联系人信息
+     * page\_num 是第几页，从1开始
+     * page\_size 是每页获取多少数据
+     * @return void
+     */
+    public static function get_external_contacts()
+    {
+        $data = array();
+        $data['client_id'] = Cache::get('client_id');
+        $data['message_type'] = 11037;
+        $data['params'] = [
+            'page_num' => 1,
+            'page_size' => 500,
+        ];
+
+        $mq = new RabbitmqServer();
+        $mq->send($data);
+    }
+
+    public static function get_rooms()
+    {
+        $data = array();
+        $data['client_id'] = Cache::get('client_id');
+        $data['message_type'] = 11038;
+        $data['params'] = [
+            'page_num' => 1,
+            'page_size' => 500,
+        ];
+
+        $mq = new RabbitmqServer();
+        $mq->send($data);
+    }
+    /**
+     * 创建 登录企业微信
+     */
+    public static function login()
+    {
+        $data = array();
+        $data['guid'] = 'string';
+        $data['smart'] = true;
+        $data['show_login_qrcode'] = false;
+        self::send_work_api($data,'/client/create');
+    }
+
     /**
      * 下载图片
      *
@@ -80,7 +160,7 @@ class QyWechatData
     {
         // 封装返回数据结构
         $data = array();
-        $data['client_id'] = 1;
+        $data['client_id'] = Cache::get('client_id');
         $data['message_type'] = 11171;             // Api数值（可以参考 - api列表demo）
         $data['params'] = [
             'aes_key' => $msg['cdn']['aes_key'],
@@ -92,11 +172,11 @@ class QyWechatData
         return self::sendSGHttp($data, 'post');
     }
 
-    public static function send_room($roomid,)
+    public static function send_room($roomid)
     {
         // 封装返回数据结构
         $data = array();
-        $data['client_id'] = 1;
+        $data['client_id'] = Cache::get('client_id');
         $data['message_type'] = 11134;
         $data['params'] = [
             "room_conversation_id" => $roomid,
@@ -109,7 +189,7 @@ class QyWechatData
     {
         // 封装返回数据结构
         $data = array();
-        $data['client_id'] = 1;
+        $data['client_id'] = Cache::get('client_id');
         $data['message_type'] = $type;
         $data['params'] = $datas;
         return self::sendSGHttp($data, 'post');
@@ -157,9 +237,14 @@ class QyWechatData
         $response = Http::get($url, $data);
     }
 
-    public static function send_work_msg($msg)
+    public static function send_work_msg($msg, $company_id)
     {
-        $url = 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=f36fc141-7a0f-43a0-84b8-234c937d1c84';
+        if ($company_id == 1) {
+            $url = 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=f36fc141-7a0f-43a0-84b8-234c937d1c84';
+        } else {
+            $url = 'https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=0daa2d3c-170b-4e66-b049-cdab7d201ae2';
+        }
+
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
         ])->post($url, [
@@ -174,5 +259,13 @@ class QyWechatData
         } else {
             return response()->json(['error' => 'Failed to send message.'], $response->status());
         }
+    }
+
+    public static function send_work_api($data, $url)
+    {
+        $url = 'http://10.0.0.130:8000' . $url;
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+        ])->post($url, $data);
     }
 }
