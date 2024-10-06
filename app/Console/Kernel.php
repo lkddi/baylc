@@ -16,6 +16,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+
+        //所有超过 24 小时的条目都将被清理
+        $schedule->command('telescope:prune')->daily();
     }
 
     /**

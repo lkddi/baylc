@@ -26,7 +26,7 @@ class WxSalestargetController extends AdminController
             $grid->column('stoptime');
             $grid->column('state')->switch();
 //            $grid->column('created_at');
-            $grid->column('updated_at')->datetime()->sortable();
+            $grid->column('updated_at')->sortable();
             // 启用表格异步渲染功能
             $grid->tools(new SalestargetTool());
             $grid->filter(function (Grid\Filter $filter) {

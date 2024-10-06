@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class ZtCompany extends Model
 {
@@ -15,6 +14,7 @@ class ZtCompany extends Model
      * @var array
      */
     protected $guarded = [];
+
 
     public function stores()
     {

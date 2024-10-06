@@ -4,8 +4,8 @@ namespace App\Models;
 
 use Dcat\Admin\Traits\HasDateTimeFormatter;
 
-use Illuminate\Database\Eloquent\Model;
 
 class Region extends Model
 {
-	use HasDateTimeFormatter;    }
+    use HasDateTimeFormatter;
+}

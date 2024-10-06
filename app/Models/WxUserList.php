@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class WxUserList extends Model
 {
@@ -15,4 +14,6 @@ class WxUserList extends Model
      * @var array
      */
     protected $guarded = [];
+
+
 }

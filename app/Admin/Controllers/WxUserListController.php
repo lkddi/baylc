@@ -34,7 +34,7 @@ class WxUserListController extends AdminController
 //            $grid->column('sex');
 //            $grid->column('unionid');
 //            $grid->column('created_at');
-            $grid->column('updated_at')->datetime()->sortable();
+            $grid->column('updated_at')->sortable();
 
             $grid->tools(new WxUserListTool());
 

@@ -25,22 +25,22 @@ class ZtSaleController extends AdminController
             //获取今年
 //            $grid->model()->where('purMachineYear','2024');
 //            dd($grid);
-//            $grid->model()->orderBy('purMachineTime', 'desc');
+            $grid->model()->orderByDesc('date');
 //            $grid->column('xid')->sortable();
 //            $grid->column('id')->sortable();
-            $grid->column('retailBillCode')->sortable();
+            $grid->column('id')->sortable();
             $grid->column('year')->sortable();
 //            $grid->column('purMachineMonth')->sortable();
-            $grid->column('purMachineTime')->display(function($text) {
-                return date("m-d",$text/1000);
+            $grid->column('date')->display(function($text) {
+                return date("m-d",$text);
             })->sortable();
 //
             $grid->column('ownerShopName');
 //
             $grid->column('store.deptBigRegionName');
-            $grid->column('store.deptRegionName');
-            $grid->column('store.retailName');
-            $grid->column('store.canalCategoryName');
+//            $grid->column('store.deptRegionName');
+//            $grid->column('store.retailName');
+//            $grid->column('store.canalCategoryName');
 
             $grid->column('model');
             $grid->column('amount');
@@ -51,12 +51,12 @@ class ZtSaleController extends AdminController
             $grid->disableCreateButton();
             $grid->export();
             //表格快捷搜索
-            $grid->quickSearch(['retailBillCode', 'ownerShopName','ext14Name','ext13Name','ext11Name','model']);
+            $grid->quickSearch(['ownerShopName','model','store.deptBigRegionName']);
             // 启用表格异步渲染功能
             $grid->async();
 
 //            简化分页 (simplePaginate)
-            $grid->simplePaginate();
+//            $grid->simplePaginate();
 
             // 开启字段选择器功能
             $grid->showColumnSelector();

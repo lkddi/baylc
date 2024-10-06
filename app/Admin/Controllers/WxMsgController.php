@@ -32,7 +32,7 @@ class WxMsgController extends AdminController
 //            $grid->column('from_wxid');
             $grid->column('from_name')->limit(5, '...');
             $grid->column('msg')->limit(30);
-            $grid->column('updated_at')->datetime()->sortable();
+            $grid->column('updated_at')->sortable();
             $grid->disableCreateButton();
 
             //表格快捷搜索

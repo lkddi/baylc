@@ -13,6 +13,9 @@ import requests
 from rabbitmq import send_message
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+
+COMPANY_ID = None
+
 # 定义一个全局线程池
 MAX_WORKERS = 5
 HEADERS = {
@@ -52,15 +55,24 @@ def http_get(url):
 
 # 登陆
 def login(login_user=None):
+    global COMPANY_ID
     url = 'http://121.196.14.173/wbalone/user/yhtLogin'
     if login_user is None:
         username = '18347940286'
         password2 = '9b8f5c3e3064599807ad042395a7b929d0472e06'
         password1 = '078cfdfed302c3d200c78f543e59bb5a'
-    else:
+        COMPANY_ID = '0001A110000000001TUQ'
+    if login_user == 1:
         username = '18081058833'
         password2 = '48efc4851e15940af5d477d3c0ce99211a70a3be'
         password1 = '5416d7cd6ef195a0f7622a9c56b55e84'
+        COMPANY_ID = '0001A110000000001TUN'
+        # 1q2w3e4r
+    # if login_user == 2:
+    #     username = '18081058833'
+    #     password2 = '48efc4851e15940af5d477d3c0ce99211a70a3be'
+    #     password1 = '5416d7cd6ef195a0f7622a9c56b55e84'
+    #     COMPANY_ID = '0001A11'
 
     data = {"username": username,
             "password": "",
@@ -80,6 +92,9 @@ def login(login_user=None):
         print(f'登录失败:{b["message"]}')
         print(f'登录失败:{data}')
         return
+
+    print(f'登录成功,公司id:{COMPANY_ID}')
+
     return b['data']['userId']
     # print(a)
 
@@ -91,26 +106,27 @@ def verify(uerId):
 
 # 以下是获取销售数据部分 开始
 def retailBill(page, count):
+    global COMPANY_ID
     a = get_current_month_start_and_end(str(datetime.datetime.now()))
     starttime = unix_time(a[0]) * 1000
     starttime = 1577808000000
     endtime = unix_time(a[1]) * 1000
-    url = 'http://121.196.14.173/occ-b2b-order/b2b/retail-order-item/retail-order-detail-report-form?search_IN_organization.id=0001A110000000001TUQ&size={0}&page={1}&search_AUTH_APPCODE=retailOrderDetailForm'.format(
-        count, page)
+    url = 'http://121.196.14.173/occ-b2b-order/b2b/retail-order-item/retail-order-detail-report-form?search_IN_organization.id={0}&search_GTE_purchaseDate_date=1704038400000&search_LT_purchaseDate_date=1735574400000&size={1}&page={2}&search_AUTH_APPCODE=retailOrderDetailForm'.format(
+        COMPANY_ID,count, page)
     # http://121.196.14.173/occ-b2b-order/b2b/retail-order-item/retail-order-detail-report-form?search_IN_organization.id=0001A110000000001TUQ&size=10&page=0&search_AUTH_APPCODE=retailOrderDetailForm
-
+    #http://121.196.14.173/occ-b2b-order/b2b/retail-order-item/retail-order-detail-report-form?search_IN_organization.id=0001A110000000001TUQ&search_GTE_purchaseDate_date=1704038400000&search_LT_purchaseDate_date=1735574400000&size=10&page=0&search_AUTH_APPCODE=retailOrderDetailForm
     a = http_get(url)
     c = json.loads(a)
     print(f'本页总条数：{c.get("size")}')
     return c
     # for i in c['content']:
     #     if len(i):
-    #         send_message(i, 'zt_sale')
 
 
 # 获取总销售数量
 def get_total_sales_number():
-    url = 'http://121.196.14.173/occ-b2b-order/b2b/retail-order-item/retail-order-detail-report-form?search_IN_organization.id=0001A110000000001TUQ&size=1&page=0&search_AUTH_APPCODE=retailOrderDetailForm'
+    global COMPANY_ID
+    url = f"http://121.196.14.173/occ-b2b-order/b2b/retail-order-item/retail-order-detail-report-form?search_IN_organization.id={COMPANY_ID}&size=1&page=0&search_GTE_purchaseDate_date=1704038400000&search_LT_purchaseDate_date=1735574400000&search_AUTH_APPCODE=retailOrderDetailForm"
     a = http_get(url)
     c = json.loads(a)
     print(f'总条数：{c.get("totalElements")}')

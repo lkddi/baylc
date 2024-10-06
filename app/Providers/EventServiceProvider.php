@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\WxSale;
+use App\Models\ZtSale;
+use App\Observers\WxSaleObserver;
+use App\Observers\ZtSaleObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -20,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        \App\Events\ZtStoreUpdated::class => [
+            \App\Listeners\ZtStoreCacheUpdater::class,
+        ],
     ];
 
     /**
@@ -29,12 +36,22 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+//        ZtSale::observe(ZtSaleObserver::class);
 //        parent::boot();
 //        Event::listen(JobQueued::class, function ($event) {
 //            Log::info('Job has been queued', ['job' => $event->job]);
 //        });
     }
 
+    /**
+     * 应用程序的模型观察者。
+     *
+     * @var array
+     */
+    protected $observers = [
+        ZtSale::class=>[ZtSaleObserver::class],
+        WxSale::class=>[WxSaleObserver::class]
+    ];
     /**
      * Determine if events and listeners should be automatically discovered.
      *

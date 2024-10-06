@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Admin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class ZtStore extends Model
 {
@@ -16,6 +15,7 @@ class ZtStore extends Model
      * @var array
      */
     protected $guarded = [];
+
 
     public function big()
     {
@@ -43,4 +43,28 @@ class ZtStore extends Model
     {
         return $query->where('isEnable', '1');
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::updated(function ($store) {
+            event(new \App\Events\ZtStoreUpdated($store));
+        });
+
+        static::created(function ($store) {
+            event(new \App\Events\ZtStoreUpdated($store));
+        });
+
+        static::deleted(function ($store) {
+            event(new \App\Events\ZtStoreUpdated($store));
+        });
+    }
+
+//    public function ztsales()
+//    {
+//        return $this->belongsTo(ZtSale::class,'')
+//    }
+
+
 }

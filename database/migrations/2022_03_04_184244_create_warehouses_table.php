@@ -17,10 +17,11 @@ return new class extends Migration
             $table->id();
             $table->integer('zt_stores_id')->comment('仓库id');
             $table->integer('zt_products_id')->comment('商品id');
-            $table->integer('quantity')->default(0)->comment('数量');
+            $table->integer('quantity')->default(0)->comment('数量');// 库存数量
             $table->integer('jinhuo')->default(0)->comment('进货总数量');
             $table->integer('nums')->default(0)->comment('销售数量');
             $table->timestamps();
+            $table->unique(['zt_stores_id', 'zt_products_id']);// 添加唯一索引
         });
     }
 

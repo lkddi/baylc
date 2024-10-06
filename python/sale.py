@@ -13,7 +13,7 @@ def send_sale_message(store_data):
     # 向 数据里面增加 一个字段值
     store_data['company'] = LOGIN_USER
     send_message(store_data, 'zt_sale')
-    print(store_data['id'])
+    # print(store_data['id'])
 
 
 if __name__ == '__main__':
@@ -26,14 +26,16 @@ if __name__ == '__main__':
         if first_arg == '1':
             # 登录
             userId = login(1)
+            COMPANY_ID = userId
             LOGIN_USER = 2
-
     else:
         userId = login()
+        COMPANY_ID = userId
         LOGIN_USER = 1
+
     MAX_WORKERS = 20
     # 设置分页数
-    number = 50
+    number = 100
     # 获取总条数
     sums = get_total_sales_number()
     all_send_futures = []
@@ -55,6 +57,5 @@ if __name__ == '__main__':
     # 等待所有发送消息的线程完成
     for send_future in as_completed(all_send_futures):
         send_future.result()
-
 # 发送采集成功提示
-wechatapi('中台数据采集完毕')
+# wechatapi('中台数据采集完毕')

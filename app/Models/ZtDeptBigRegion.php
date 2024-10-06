@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Admin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 
 class ZtDeptBigRegion extends Model
@@ -17,6 +16,7 @@ class ZtDeptBigRegion extends Model
      * @var array
      */
     protected $guarded = [];
+
 
     public function store()
     {

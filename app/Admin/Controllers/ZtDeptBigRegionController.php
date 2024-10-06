@@ -22,7 +22,7 @@ class ZtDeptBigRegionController extends AdminController
             $grid->column('title');
             $grid->column('code');
 //            $grid->column('created_at');
-            $grid->column('updated_at')->dateTime()->sortable();
+            $grid->column('updated_at')->sortable();
             $grid->disableCreateButton();
 
             $grid->filter(function (Grid\Filter $filter) {

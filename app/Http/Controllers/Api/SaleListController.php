@@ -31,7 +31,7 @@ class SaleListController extends Controller
 //            ]);
 //        }
         if ($user) {
-            $sales = WxSale::where('from_wxid', $user)->orderBy('id','desc')->get();
+            $sales = WxSale::with('store','product')->where('from_wxid', $user)->orderBy('id','desc')->get();
             return response()->json([
                 'code' => 200,
                 'data' => WxSaleResource::collection($sales),

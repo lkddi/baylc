@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use App\Models\WxWork;
+use App\Services\WorkWechat\AddGroupMessageHandler;
 use App\Services\WorkWechat\GroupMessageHandler;
 use App\Services\WorkWechat\ImageMessageHandler;
 use App\Services\WorkWechat\MessageHandlerInterface;
@@ -31,6 +32,8 @@ class MessageHandlerFactory
                     return new UserListMessageHandler();
                 case '11036'://群列表
                     return new UserListMessageHandler();
+                case '11072':
+                    return new AddGroupMessageHandler();
                 default:
                     //找不到的 都归总的其他消息进行处理
                     return new OtherMessageHandler();

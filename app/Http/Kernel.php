@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\PreventDuplicateExecution;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 use Illuminate\Http\Middleware\HandleCors;
 

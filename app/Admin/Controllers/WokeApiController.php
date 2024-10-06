@@ -3,6 +3,8 @@
 namespace App\Admin\Controllers;
 
 
+use App\Jobs\SendMessageWorkJob;
+use App\Models\WxWork;
 use App\Services\QyWechatData;
 use App\Services\Rabbitmq\RabbitmqServer;
 use Dcat\Admin\Layout\Content;
@@ -23,7 +25,7 @@ class WokeApiController extends Controller
 
     public function index(Content $content)
     {
-        return $content->title('表单动态显示')
+        return $content->title('企业微信接口')
 //            ->body($this->buildPreviewButton())
             ->body($this->newline())
             ->body(
@@ -41,7 +43,17 @@ HTML
 
             $form->select('select')
                 ->when(11154, function (Form $form) {
-                    $form->text('conversation_id');
+//                    $form->text('conversation_id');
+                    $form->listbox('conversation_ids')
+                        ->options(WxWork::all()->pluck('roomname', 'roomid'))
+                        ->customFormat(function ($v) {
+                            if (! $v) {
+                                return [];
+                            }
+
+                            // 从数据库中查出的二维数组中转化成ID
+                            return array_column($v, 'id');
+                        });
                     $form->textarea('content')->help('请输入要发送的内容');
                 })
                 ->when(11038, function (Form $form) {
@@ -66,14 +78,16 @@ HTML
     public function store(\Illuminate\Http\Request $request)
     {
         $data = [];
-        $data['client_id'] = 1;
         $data['message_type'] = $request->get('select');
         switch ($request->get('select')){
             case 11154://发送文本消息
-                $data['params'] = [
-                    'conversation_id' => $request->get('conversation_id'),
-                    'content' => $request->get('content'),
-                ];
+
+                $conversation_ids = $request->get('conversation_ids');
+                foreach ($conversation_ids as $conversation_id){
+                    $send['content'] = $request->get('content');
+                    $send['conversation_id'] = $conversation_id;
+                    SendMessageWorkJob::dispatch($send,'/msg/send_text');
+                }
                 break;
             case 11038:
                 $data['params'] = [
@@ -83,9 +97,8 @@ HTML
 
         }
 
-        $mq = new RabbitmqServer();
-        $mq->send($data);
-        \Log::info($data);
+//        $mq = new RabbitmqServer();
+//        $mq->send($data);
         return $this->success();
 //        return $this->form()->saving(function (\Dcat\Admin\Form $form) {
 //            // 清空缓存
@@ -101,6 +114,8 @@ HTML
 //        })->store();
 //        \Log::info();
     }
+
+
 
 
 }

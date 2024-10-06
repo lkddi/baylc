@@ -52,8 +52,6 @@ class CoreServer
         try {
             $add = $data;
             $add['message_data'] = json_encode($data['message_data']);
-            //            $data['message_data'] = json_encode($data);
-            // 信息类型type 如果是11187,11123,11051 则不保存到数据库,也不操作
             if (in_array($data['message_type'], [11187, 11123, 11051])) {
                 return;
             }
@@ -71,7 +69,7 @@ class CoreServer
         $user = WxWorkUser::firstOrCreate(
             [
                 'sender' => $messageData['sender'],
-                'zt_company_id' => $work->zt_company_id,
+//                'zt_company_id' => $work->zt_company_id,
             ],
             ['sender_name' => $messageData['sender_name']]
         );

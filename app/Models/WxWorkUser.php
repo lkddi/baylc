@@ -23,6 +23,7 @@ class WxWorkUser extends Model
 
     ];
 
+
     protected $fillable = [
         // 其他已有的可填充属性
         'sender',

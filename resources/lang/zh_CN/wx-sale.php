@@ -15,7 +15,8 @@ return [
 
         ],
         'product'=>[
-            'model'=>'型号'
+            'model'=>'型号',
+            'price'=>'单价'
         ],
         'wxuser'=>[
             'nickname'=>'促销员',

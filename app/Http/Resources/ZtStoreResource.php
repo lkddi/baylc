@@ -19,6 +19,7 @@ class ZtStoreResource extends JsonResource
             'name'=>$this->name,
             'nickname'=>$this->nickname,
             'storename'=>$this->storename,
+            'facadeShort'=>$this->facadeShort,
             'code'=>$this->code,
         ];
     }

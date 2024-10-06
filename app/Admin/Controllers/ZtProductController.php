@@ -27,7 +27,7 @@ class ZtProductController extends AdminController
             $grid->column('ticheng');
             $grid->column('offline')->switch();
 //            $grid->column('created_at');
-            $grid->column('updated_at')->datetime()->sortable();
+            $grid->column('updated_at')->sortable();
 
             //禁止插入
 //            $grid->disableCreateButton();
@@ -78,7 +78,7 @@ class ZtProductController extends AdminController
             $form->display('id');
             $form->text('title');
             $form->text('model');
-            $form->text('Price');
+            $form->text('price');
             $form->text('ticheng');
             $form->text('offline');
 

@@ -30,7 +30,7 @@ class ZtStoreController extends AdminController
 //            $grid->column('riscode');
             $grid->column('name');
             $grid->column('warehouseName');
-            $grid->column('storename')->sortable();
+            $grid->column('facadeShort')->sortable();
 //            $grid->column('storecode')->sortable();
             $grid->column('nickname')->editable()->sortable();
             $grid->column('canalCategoryName');
@@ -38,7 +38,7 @@ class ZtStoreController extends AdminController
             $grid->column('isEnable')->bool(['1' => true, '2' => false])->sortable();
             $grid->column('deptRegionName');
             $grid->column('deptBigRegionName');
-            $grid->column('updated_at')->dateTime()->sortable();
+            $grid->column('updated_at')->sortable();
 
             $grid->selector(function (Grid\Tools\Selector $selector) {
                 if (Admin::user()->id ==1) $selector->select('zt_company_id', '分公司', ZtCompany::get()->pluck('name', 'id'));

@@ -99,7 +99,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 Route::any('tel', [AuthorizationsController::class, 'tel']);
 
 Route::any('work',function (Request $request){
-    Log::info($request->all());
+//    Log::info($request->all());
 });
 
 

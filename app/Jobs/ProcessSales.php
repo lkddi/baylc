@@ -35,9 +35,8 @@ class ProcessSales implements ShouldQueue
     public function handle()
     {
         $data = $this->data;
-        Log::info($data);
         try {
-            ZtSale::updateOrCreate(
+            $a = ZtSale::updateOrCreate(
                 [
                     'tid' => $data['TID'],
                     'zt_company_id' => $data['company']
@@ -45,18 +44,18 @@ class ProcessSales implements ShouldQueue
                 'year' => $data['PUR_MACHINE_YEAR'],
                 'month' => $data['PUR_MACHINE_MONTH'],
                 'date' => $data['CREATIONDATE'] / 1000,
-                'retailBillCode' => $data['RETAILBILLCODE'],//销售单号
-                'retailTypeName' => $data['RETAILTYPENAME'], //销售方式 普通零售-B
-                'ownerShopName' => $data['OWNERSHOPNAME'],
+                'code' => $data['RETAILBILLCODE'],//销售单号
+//                'type' => $data['RETAILTYPENAME'], //销售方式 普通零售-B
+//                'type' => $data['OWNERSHOPNAME'],
                 'model' => $data['MODEL'],
                 'customerZeroAmount' => $data['CUSTOMERZEROAMOUNT'],
                 'unitPrice' => $data['UNITPRICE'],
                 'amount' => $data['AMOUNT'],
-                'deptBigRegionName' => $data['SLICEAREANAME'],//大区
-                'risCode' => $data['RISCODE'],//ris编码
-                'saleTypeName' => $data['SALETYPENAME'],//正向销售
-//                    'zt_store_code' => ZtStore::where('name', $data['OWNERSHOPNAME'])->first()->value('code'),
+//                'deptBigRegionName' => $data['SLICEAREANAME'],//大区
+//                'risCode' => $data['RISCODE'],//ris编码
+                'type' => $data['SALETYPENAME'],//正向销售
             ]);
+//            Log::info($a);
 
         } catch (\Exception $e) {
             // 捕获异常并记录日志
@@ -64,16 +63,4 @@ class ProcessSales implements ShouldQueue
         }
     }
 
-    private function createOrUpdateRegion($modelClass, $code, $name, $companyid)
-    {
-        try {
-            if (!empty($code)) {
-                $region = $modelClass::updateOrCreate(['code' => $code], ['title' => $name, 'zt_company_id' => $companyid]);
-//                echo $name . ' 添加成功' . PHP_EOL;
-            }
-        } catch (\Exception $e) {
-            // 捕获异常并记录日志
-            Log::error('处理队列任务时发生异常：' . $e->getMessage());
-        }
-    }
 }

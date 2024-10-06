@@ -21,7 +21,7 @@ class WxWorkUserController extends AdminController
             $grid->column('id')->sortable();
             $grid->column('sender');
             $grid->column('sender_name');
-            $grid->column('zt_store_code');
+//            $grid->column('zt_store_code');
 //            $grid->column('nostoremsg');
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();

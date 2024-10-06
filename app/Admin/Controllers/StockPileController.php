@@ -25,7 +25,7 @@ class StockPileController extends AdminController
             $grid->column('purchases');
             $grid->column('sales');
 //            $grid->column('created_at');
-            $grid->column('updated_at')->datetime()->sortable();
+            $grid->column('updated_at')->sortable();
 
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('id');

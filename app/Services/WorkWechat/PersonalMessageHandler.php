@@ -3,9 +3,11 @@
 namespace App\Services\WorkWechat;
 
 use App\Exceptions\WokeException;
+use App\Jobs\FastgptJob;
 use App\Models\WxUserList;
 use App\Models\WxWork;
 use App\Models\ZtProduct;
+use App\Services\FastgptService;
 use App\Services\QyWechatData;
 use App\Services\WeChatFerry\AddSale;
 use App\Services\WxBot;
@@ -34,7 +36,10 @@ class PersonalMessageHandler implements MessageHandlerInterface
                     $work = new WxWork();
                     $work->roomid = $message_data['conversation_id'];
                     $work->save();
-                } elseif ($group['isadd']) {
+                }
+
+                // 手动增加销售
+                if ($group['isadd']) {
                     if (checkAndPrepend($content, 4, '增加')) {
                         $title = str_replace('增加 ', '', $content);
                         $x = explode(' ', $title);
@@ -44,10 +49,10 @@ class PersonalMessageHandler implements MessageHandlerInterface
                     }
                 }
 
+                // 添加型号
                 if (checkAndPrepend($content, 3, '添加型号')) {
                     $title = str_replace('添加型号 ', '', $content);
                     $x = explode(' ', $title);
-//                    $a = explode(' ', $x[0]);
                     if (strpos($x[1], '-') !== false || strpos($x[1], '+') !== false) {
                         if (count($x) >= 2) {
                             $product = ZtProduct::where('model', $x[0])->first();
@@ -55,8 +60,6 @@ class PersonalMessageHandler implements MessageHandlerInterface
                                 $product = new ZtProduct();
                                 $product->title = $x[1];
                                 $product->model = $x[0];
-//                            $product->price = $x[2];
-//                            $product->ticheng = $x[3];
                                 $product->save();
                                 $mess['send_user'] = 0;
                                 $mess['data'] = $x[0] . ' 型号增加成功!';
@@ -74,6 +77,29 @@ class PersonalMessageHandler implements MessageHandlerInterface
                     }
 
                 }
+
+                // 开启智能聊天
+                if ($group->ai){
+                    // 检查 at_list 是否有内容
+                    if (!empty($message_data['at_list'])) {
+                        // 遍历 at_list 数组
+                        foreach ($message_data['at_list'] as $user) {
+                            // 检查 user_id 是否为 1688856965630846
+                            if ($user['user_id'] === '1688856965630846') {
+                                // 移除 @昵称 部分
+                                $content = $message_data['content'];
+                                $nickname = '@' . $user['nickname'];
+                                $content = str_replace($nickname, '', $content);
+                                // 移除空格
+                                $content = trim($content);
+                                FastgptJob::dispatch($message_data);
+
+                            }
+                        }
+                    }
+                }
+
+
             } else {
                 $bot = WxBot::where('clientId', $message['client_id'])->first();
                 if ($bot) {
@@ -104,21 +130,7 @@ class PersonalMessageHandler implements MessageHandlerInterface
                 }
             }
 
-            // 检查 at_list 是否有内容
-            if (!empty($message_data['at_list'])) {
-                // 遍历 at_list 数组
-                foreach ($message_data['at_list'] as $user) {
-                    // 检查 user_id 是否为 1688856965630846
-                    if ($user['user_id'] === '1688856965630846') {
-                        // 移除 @昵称 部分
-                        $content = $message_data['content'];
-                        $nickname = '@' . $user['nickname'];
-                        $content = str_replace($nickname, '', $content);
-                        // 移除空格
-                        $content = trim($content);
-                    }
-                }
-            }
+
             if ($content == '123') {
 //                echo '收到主人问话: ' . $content . "\n";
                 $mess['send_user'] = 0;

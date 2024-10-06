@@ -135,8 +135,9 @@ class QyWechatData
             'page_size' => 500,
         ];
 
-        $mq = new RabbitmqServer();
-        $mq->send($data);
+//        $mq = new RabbitmqServer();
+//        $mq->send($data);
+        self::send_work_api($data,'/room/get_rooms');
     }
     /**
      * 创建 登录企业微信
@@ -263,9 +264,13 @@ class QyWechatData
 
     public static function send_work_api($data, $url)
     {
+        $data['guid'] = Cache::get('client_id');
         $url = 'http://10.0.0.130:8000' . $url;
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
         ])->post($url, $data);
+//        Log::info($data);
+//        Log::info($response);
+        return $response;
     }
 }

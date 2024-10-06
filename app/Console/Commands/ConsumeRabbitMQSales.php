@@ -8,6 +8,7 @@ use App\Services\CoreServer;
 use App\Services\QyWechatData;
 use Exception;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 
@@ -31,7 +32,15 @@ class ConsumeRabbitMQSales extends Command
 
     protected function consumeMessages()
     {
-        $channel = $this->connection->channel();
+
+        try {
+            $channel = $this->connection->channel();
+        } catch (\PhpAmqpLib\Exception\AMQPRuntimeException $e) {
+            Log::error('Failed to connect to RabbitMQ: ' . $e->getMessage());
+            // 可以在这里增加重试逻辑
+            sleep(5); // 等待5秒后重试
+            return $this->consumeMessages(); // 递归调用自身
+        }
         $queue = 'zt_sale';
 
         $channel->queue_declare($queue, false, true, false, false);

@@ -7,6 +7,14 @@
 use App\Models\WxGroup;
 use App\Models\WxUser;
 use App\Services\QyWechatData;
+use Carbon\Carbon;
+
+if (!function_exists('format_datetime')) {
+    function format_datetime($datetime)
+    {
+        return Carbon::createFromFormat('Y-m-d\TH:i:s.u\Z', $datetime)->format('Y-m-d H:i:s');
+    }
+}
 
 function getToUser($data)
 {
@@ -242,6 +250,7 @@ class Spider
         fwrite($resource, $file);
         fclose($resource);
     }
+
 
 
 }

@@ -34,7 +34,7 @@ class WarehouseController extends AdminController
             $grid->column('jinhuo');
             $grid->column('nums');
 //            $grid->column('created_at');
-            $grid->column('updated_at')->sortable()->datetime();
+            $grid->column('updated_at')->sortable();
             //禁止插入
             $grid->disableCreateButton();
             $grid->export();

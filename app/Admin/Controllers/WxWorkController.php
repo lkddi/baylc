@@ -5,7 +5,7 @@ namespace App\Admin\Controllers;
 use Admin;
 use App\Admin\Extensions\Tools\WxGroupsUser;
 use App\Admin\Grid\Tools\WxWorkBotTool;
-use App\Models\WxWork;
+use App\Admin\Repositories\WxWork;
 use App\Models\ZtCompany;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -22,30 +22,34 @@ class WxWorkController extends AdminController
      */
     protected function grid()
     {
-        return Grid::make(new WxWork(['company']), function (Grid $grid) {
+        return Grid::make(new WxWork(['companys']), function (Grid $grid) {
             if (Admin::user()->id !=1) {
                 $grid->model()->company();
             }
 
             $grid->model()->orderBy('retailCode', 'desc');
-            if (Admin::user()->id ==1) $grid->column('zt_company_id');
+            if (Admin::user()->id ==1) $grid->column('companys.name');
             $grid->column('roomid');
             $grid->column('roomname')->editable();
 //            if (Admin::user()->id ==1) $grid->column('company.name');
             $grid->column('user')->switch();
             $grid->column('photo')->switch();
-            $grid->column('advance')->switch();
+//            $grid->column('advance')->switch();
             $grid->column('ischeck')->switch();
             $grid->column('isadd')->switch();
-            $grid->column('chat')->switch();
+//            $grid->column('chat')->switch();
             $grid->column('kucun')->switch();
-            $grid->column('new')->switch();
-            $grid->column('updated_at')->datetime()->sortable();
+            $grid->column('ai')->switch();
+//            $grid->column('new')->switch();
+            $grid->column('updated_at')->sortable();
             $grid->disableCreateButton();
             $grid->export();
             $grid->tools(new WxWorkBotTool());
 
+            $grid->selector(function (Grid\Tools\Selector $selector) {
+                if (Admin::user()->id ==1) $selector->select('zt_company_id', '分公司', ZtCompany::get()->pluck('name', 'id'));
 
+            });
 
             // 禁用删除按钮
 //            $grid->disableDeleteButton();
@@ -110,6 +114,7 @@ class WxWorkController extends AdminController
             $form->switch('photo');
             $form->switch('advance');
             $form->switch('kucun');
+            $form->switch('ai');
 
             $form->display('created_at');
             $form->display('updated_at');

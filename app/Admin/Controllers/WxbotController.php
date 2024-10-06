@@ -49,7 +49,7 @@ class WxbotController extends AdminController
 //            $grid->column('apiurl');
             $grid->column('clientId')->editable();
 //            $grid->column('created_at');
-            $grid->column('updated_at')->datetime()->sortable();
+            $grid->column('updated_at')->sortable();
 
             //禁用 新增
             $grid->disableCreateButton();

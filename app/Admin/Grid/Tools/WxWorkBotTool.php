@@ -2,8 +2,11 @@
 
 namespace App\Admin\Grid\Tools;
 
+use App\Models\WxUserList;
 use App\Models\WxWork;
 use App\Services\QyWechatData;
+use App\Services\WorkWechat\UserListMessageHandler;
+use Cache;
 use Dcat\Admin\Grid\Tools\AbstractTool;
 use Illuminate\Http\Request;
 
@@ -52,8 +55,28 @@ class WxWorkBotTool extends AbstractTool
 
 //        WxWork::update(['new'=>0]);
         WxWork::where('id', '>=', 1)->update(['new' => 0]);
-        QyWechatData::get_rooms();
-        return $this->response()->success('更新成功!')->refresh();
+//        QyWechatData::get_rooms();
+        $data['guid'] = Cache::get('client_id');
+        $data['page_num'] = 1;
+        $data['page_size'] = 500;
+        $request = QyWechatData::send_work_api($data,'/room/get_rooms');
+        $request = json_decode($request, true);
+        if (isset($request['data']['room_list']) && count($request['data']['room_list'])>0) {
+            foreach ($request['data']['room_list'] as $room) {
+                WxWork::updateOrCreate(
+                    [
+                        'roomid' => $room['conversation_id']
+                    ],
+                    [
+                        'roomname' => $room['nickname'],
+                    ]);
+            }
+            return $this->response()->success('更新成功!')->refresh();
+
+        }else{
+            return $this->response()->warning('更新失败!')->refresh();
+
+        }
     }
 
     /**
