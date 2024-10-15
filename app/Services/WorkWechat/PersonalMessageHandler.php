@@ -44,7 +44,7 @@ class PersonalMessageHandler implements MessageHandlerInterface
                         $title = str_replace('增加 ', '', $content);
                         $x = explode(' ', $title);
                         if (count($x) >= 3) {
-                            AddSale::AddSale($message_data, $x[0], $x[1], $x[2], $x[3] ?? 1);
+                            AddSale::AddSale($message);
                         }
                     }
                 }
@@ -93,7 +93,6 @@ class PersonalMessageHandler implements MessageHandlerInterface
                                 // 移除空格
                                 $content = trim($content);
                                 FastgptJob::dispatch($message_data);
-
                             }
                         }
                     }
@@ -118,7 +117,7 @@ class PersonalMessageHandler implements MessageHandlerInterface
                 if ($content == '数据查询') {
                     $user = WxUserList::where('user_id', $message_data['sender'])->first();
                     if ($user) {
-                        $mess['guid'] = \Cache::get('client_id');
+                        $mess['guid'] = $message['client_id'];
                         $mess['conversation_id'] = $user->conversation_id;
                         $mess['title'] = '销售助理-销售记录查询';
                         $mess['desc'] = '查询你登记的销售记录信息';

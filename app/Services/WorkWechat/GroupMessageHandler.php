@@ -23,15 +23,15 @@ class GroupMessageHandler implements MessageHandlerInterface
 
         $message_data = $message['message_data'];
         try {
-            $group = WxWork::where('roomid', $message_data['conversation_id'])->first();
+            $group = WxWork::where('roomid', $message['message_data']['conversation_id'])->first();
             // 判断是否开启记录销售
             if ($group && $group->isadd) {
                 // 判断是否是销售登记
 //                if (strpos($message_data['desc'], '来自松下董冬明') !== false) {
-                $remarkParts = explode(' ', $message_data['remark']);
+                $remarkParts = explode(' ', $message['message_data']['remark']);
                 if (count($remarkParts) >= 3) {
                     $num = isset($remarkParts[3]) && $remarkParts[3] !== '' ? $remarkParts[3] : 1;
-                    AddSale::AddSale($message_data, $remarkParts[0], $remarkParts[1], $remarkParts[2], $num,$message_data['sender_name']);
+                    AddSale::AddSale($message);
                 }
 //                }
             }

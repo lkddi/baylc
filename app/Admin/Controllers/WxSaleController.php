@@ -46,7 +46,7 @@ class WxSaleController extends AdminController
      */
     protected function grid()
     {
-        return Grid::make(new WxSale(['store', 'wxuser', 'company','product']), function (Grid $grid) {
+        return Grid::make(new WxSale(['store', 'wxuser', 'company','product','workuser']), function (Grid $grid) {
             if (Admin::user()->id != 1) {
                 $grid->model()->company();
             }
@@ -56,11 +56,14 @@ class WxSaleController extends AdminController
             $grid->column('store.deptRegionName')->sortable();
             $grid->column('store.retailName')->sortable();
             $grid->column('store.canalCategoryName')->sortable();
+            $grid->column('store.code')->sortable();
+            $grid->column('store.nickname')->sortable();
             $grid->column('store.name')->sortable();
             $grid->column('model')->sortable();
             $grid->column('quantity')->sortable();
             $grid->column('product.price');
             $grid->column('amount');
+
             // 添加不存在的字段
             $grid->column('提成金额')->display(function () {
                 return $this->quantity * $this->amount;
@@ -68,10 +71,10 @@ class WxSaleController extends AdminController
             $grid->column('销售金额')->display(function () {
                 return $this->quantity * $this->product->price;
             });
+            $grid->column('workuser.sender_name');
             $grid->column('created_at');
             //禁止插入
             $grid->disableCreateButton();
-//            $grid->export();
             //导出数据进行 关联数据替换
             $grid->export()->rows(function (Collection $rows) {
                 foreach ($rows as $index => &$row) {
@@ -81,11 +84,18 @@ class WxSaleController extends AdminController
                 return $rows;
             })->filename(admin_trans_label('销售明细') . '-' . date('Ymdhis', time()));
 
+            $grid->selector(function (Grid\Tools\Selector $selector) {
+                if (Admin::user()->id ==1) $selector->select('zt_company_id', '分公司', \App\Models\ZtCompany::get()->pluck('name', 'id'));
+//                $selector->select('deptBigRegionName', '渠道', ZtDeptBigRegion::Company()->pluck('title', 'title'));
+//                $selector->select('canalTypeName', '渠道', ZtCanalType::Company()->pluck('title', 'title'));
+            });
             //表格快捷搜索
-            $grid->quickSearch(['store.name', 'product.model', 'wxuser.nickname', 'store.canalCategoryName', 'store.deptBigRegionName', 'store.retailName']);
+            $grid->quickSearch(['store.name', 'product.model', 'wxuser.nickname', 'store.canalCategoryName', 'store.deptBigRegionName', 'store.retailName', 'store.nickname']);
 
             // 开启字段选择器功能
             $grid->showColumnSelector();
+            // 设置默认隐藏字段
+            $grid->hideColumns(['store.code','store.deptRegionName','workuser.sender_name']);
             // 默认为每页20条
             $grid->paginate(30);
 
@@ -96,7 +106,7 @@ class WxSaleController extends AdminController
                 $filter->equal('store.deptBigRegionName', '大区')->select(ZtDeptBigRegion::Company()->pluck('title', 'title'));
                 $filter->equal('store.deptRegionName', '地区')->select(ZtDeptRegion::Company()->pluck('title', 'title'));
                 $filter->equal('store.retailName', '片区')->select(ZtRetail::Company()->pluck('title', 'title'));
-                $filter->equal('store.canalCategoryName', '渠道')->select(ZtCanalType::Company()->pluck('title', 'title'));
+//                $filter->equal('store.canalCategoryName', '渠道')->select(ZtCanalType::Company()->pluck('title', 'title'));
                 $filter->equal('zt_product_id', '型号')->select(ZtProduct::get()->pluck('title', 'id'));
                 $filter->whereBetween('created_at', function ($q) {
                     $start = $this->input['start'] ?? null;

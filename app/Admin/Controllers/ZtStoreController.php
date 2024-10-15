@@ -56,7 +56,7 @@ class ZtStoreController extends AdminController
             //启用数据导出
             $grid->export();
             //表格快捷搜索
-            $grid->quickSearch(['name', 'warehouseName', 'canalCategoryName','retailName','code','nickname','storename','storecode']);
+            $grid->quickSearch(['name', 'warehouseName', 'canalCategoryName','retailName','code','nickname','storename','storecode','facadeShort']);
             // 默认为每页20条
             $grid->paginate(30);
             $grid->filter(function (Grid\Filter $filter) {

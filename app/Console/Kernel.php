@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\ScheduleTasksCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -19,6 +20,9 @@ class Kernel extends ConsoleKernel
 
         //所有超过 24 小时的条目都将被清理
         $schedule->command('telescope:prune')->daily();
+        $schedule->command(ScheduleTasksCommand::class)->everyMinute();
+
+
     }
 
     /**

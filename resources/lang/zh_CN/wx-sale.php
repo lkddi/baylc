@@ -12,6 +12,9 @@ return [
             'deptBigRegionName'=>'大区',
             'retailName'=>'片区',
             'deptRegionName'=>'地区',
+            'code'=>'中台门店编码',
+            'facadeShort'=>'简称',
+            'nickname'=>'简称'
 
         ],
         'product'=>[
@@ -21,6 +24,9 @@ return [
         'wxuser'=>[
             'nickname'=>'促销员',
             'name'=>'促销员'
+        ],
+        'workuser'=>[
+            'sender_name'=>'登记人'
         ],
         'zt_store_code' => '门店编码',
         'zt_product_id' => 'zt_product_id',

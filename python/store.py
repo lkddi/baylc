@@ -32,10 +32,11 @@ if __name__ == '__main__':
         LOGIN_USER = 1
 
     # 设置 分页数
-    number = 50
+    number = 10
     MAX_WORKERS = 20
     # 获取总条数
-    sums = zt_store_count()
+#     sums = zt_store_count()
+    sums = 100
 
     all_send_futures = []
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:

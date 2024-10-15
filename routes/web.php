@@ -6,6 +6,7 @@ use App\Jobs\SendMessageWorkJob;
 use App\Models\WxSale;
 use App\Models\ZtStore;
 use App\Services\CoreServer;
+use App\Services\FastgptService;
 use App\Services\QyWechatData;
 use App\Services\Rabbitmq\RabbitmqServer;
 use Carbon\Carbon;
@@ -27,8 +28,19 @@ Route::get('/', [\App\Http\Controllers\VlwController::class, 'index']);
 
 Route::get('/t', function (\Illuminate\Http\Request $request) {
 
+// 获取本月的第一天和最后一天
+    $firstDayOfMonth = Carbon::now()->startOfMonth();
+    $lastDayOfMonth = Carbon::now()->endOfMonth();
 
+$store = ZtStore::find(13710);
+    $salesThisMonth = $store->wxsales()
+        ->whereBetween('created_at', [$firstDayOfMonth, $lastDayOfMonth])
+        ->sum('quantity');
+    Log::error($salesThisMonth);
+dd($salesThisMonth);
 
+//    $fast  =New FastgptService(2);
+//    $fast->sendFastgpt($num['message_data']['content'], $num['message_data']['conversation_id'],$num['message_data']['conversation_id']);
 
 });
 

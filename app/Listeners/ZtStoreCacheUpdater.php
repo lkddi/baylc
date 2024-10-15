@@ -20,10 +20,10 @@ class ZtStoreCacheUpdater
     public function handle(ZtStoreUpdated $event)
     {
         // 获取指定字段的数据
-        $stores = ZtStore::select('id', 'name', 'storename','nickname')->get();
+//        $stores = ZtStore::select('id', 'name', 'storename','nickname')->get();
 
         // 序列化数据以节省空间（可选）
-        $serializedStores = serialize($stores);
-        Cache::put('stores', $stores, now()->addDay()); // 缓存一天
+//        $serializedStores = serialize($stores);
+//        Cache::put('stores', $stores, now()->addDay()); // 缓存一天
     }
 }

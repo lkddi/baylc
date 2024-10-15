@@ -55,7 +55,6 @@ class CoreServer
             if (in_array($data['message_type'], [11187, 11123, 11051])) {
                 return;
             }
-            //            WorkMessage::create($add);
             unset($add);
         } catch (WokeException $e) {
             throw $e;

@@ -9,6 +9,11 @@ use App\Models\WxUser;
 use App\Services\QyWechatData;
 use Carbon\Carbon;
 
+function Bot_id()
+{
+    
+}
+
 if (!function_exists('format_datetime')) {
     function format_datetime($datetime)
     {

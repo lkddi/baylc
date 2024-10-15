@@ -41,21 +41,14 @@ class AddGroupMessageHandler implements MessageHandlerInterface
         $user_ids = array_map(function ($item) {
             return $item['user_id'];
         }, $message['message_data']['member_list']);
-
-
         return $user_ids;
-
-        $users = $message['message_data']['at_list'];
-        $userlist = '';
-        foreach ($users as $user) {
-            $userlist .= $user['user_id'] . ',';
-        }
     }
 
     public function send($mes)
     {
         $message = $this->message;
         $data['conversation_id'] = $message['message_data']['room_conversation_id'];
+        $data['guid'] = $message['client_id'];
         $data['content'] = $mes;
         $data['at_list'] = $this->getAtList();
         QyWechatData::send_work_api($data, '/msg/send_room_at');

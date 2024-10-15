@@ -17,7 +17,8 @@ class InventoryLog extends Model
         'zt_products_id',
         'zt_stores_id',
         'type',
-        'quantity'
+        'quantity',
+        'description'
     ];
 
     public function store()

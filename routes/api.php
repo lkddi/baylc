@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SaleListController;
 use App\Http\Controllers\Api\StoreController;
 use App\Http\Controllers\Api\WeChatController;
+use App\Http\Controllers\Api\WorkController;
 use App\Http\Controllers\Api\WorkImgController;
 use App\Http\Controllers\Auth\WechatLoginController;
 use App\Http\Controllers\HuangGroupController;
@@ -98,9 +99,8 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 Route::any('tel', [AuthorizationsController::class, 'tel']);
 
-Route::any('work',function (Request $request){
-//    Log::info($request->all());
-});
+// 企业微信回调
+Route::any('work',[WorkController::class,'work']);
 
 
 Route::get('wx/salelist',[SaleListController::class,'index']);

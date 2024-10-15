@@ -3,6 +3,8 @@
 namespace App\Services;
 
 
+use App\Jobs\SendMessageWorkJob;
+use App\Models\WxWork;
 use App\Services\Rabbitmq\RabbitmqServer;
 use Cache;
 use Exception;
@@ -39,7 +41,7 @@ class QyWechatData
             "conversation_id" => $to_wxid,
             "content" => $msg
         ];
-        self::send_work_api($mess,'/msg/send_text');
+        self::send_work_api($mess, '/msg/send_text');
 //        Log::info('消息发送记录');
 //        Log::info($data);
         self::send_work_msg($msg, $company_id);
@@ -137,8 +139,9 @@ class QyWechatData
 
 //        $mq = new RabbitmqServer();
 //        $mq->send($data);
-        self::send_work_api($data,'/room/get_rooms');
+        self::send_work_api($data, '/room/get_rooms');
     }
+
     /**
      * 创建 登录企业微信
      */
@@ -148,7 +151,7 @@ class QyWechatData
         $data['guid'] = 'string';
         $data['smart'] = true;
         $data['show_login_qrcode'] = false;
-        self::send_work_api($data,'/client/create');
+        self::send_work_api($data, '/client/create');
     }
 
     /**
@@ -264,13 +267,24 @@ class QyWechatData
 
     public static function send_work_api($data, $url)
     {
-        $data['guid'] = Cache::get('client_id');
-        $url = 'http://10.0.0.130:8000' . $url;
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-        ])->post($url, $data);
+        try {
+            $url = 'http://10.0.0.130:8000' . $url;
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post($url, $data);
 //        Log::info($data);
 //        Log::info($response);
-        return $response;
+            $res = $response->json();
+            if (!$res['status']) {
+                SendMessageWorkJob::dispatch($data, $url);
+                return false;
+            }
+            return true;
+        } catch (Exception $e) {
+            SendMessageWorkJob::dispatch($data, $url);
+            return true;
+        }
+
     }
+
 }

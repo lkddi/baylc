@@ -2,13 +2,13 @@
 
 namespace App\Admin\Controllers;
 
-use App\Admin\Repositories\WxWorkUser;
+use App\Admin\Repositories\Task;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Show;
 use Dcat\Admin\Http\Controllers\AdminController;
 
-class WxWorkUserController extends AdminController
+class TaskController extends AdminController
 {
     /**
      * Make a grid builder.
@@ -17,17 +17,15 @@ class WxWorkUserController extends AdminController
      */
     protected function grid()
     {
-        return Grid::make(new WxWorkUser(), function (Grid $grid) {
+        return Grid::make(new Task(), function (Grid $grid) {
             $grid->column('id')->sortable();
-            $grid->column('sender');
-            $grid->column('sender_name');
-//            $grid->column('zt_store_code');
-//            $grid->column('nostoremsg');
+            $grid->column('name');
+            $grid->column('description');
+            $grid->column('command_class');
+            $grid->column('schedule_type');
+            $grid->column('schedule_value');
             $grid->column('created_at');
             $grid->column('updated_at')->sortable();
-
-            //表格快捷搜索
-            $grid->quickSearch(['sender', 'sender_name']);
 
             $grid->filter(function (Grid\Filter $filter) {
                 $filter->equal('id');
@@ -45,12 +43,13 @@ class WxWorkUserController extends AdminController
      */
     protected function detail($id)
     {
-        return Show::make($id, new WxWorkUser(), function (Show $show) {
+        return Show::make($id, new Task(), function (Show $show) {
             $show->field('id');
-            $show->field('sender');
-            $show->field('sender_name');
-            $show->field('zt_store_code');
-            $show->field('nostoremsg');
+            $show->field('name');
+            $show->field('description');
+            $show->field('command_class');
+            $show->field('schedule_type');
+            $show->field('schedule_value');
             $show->field('created_at');
             $show->field('updated_at');
         });
@@ -63,13 +62,13 @@ class WxWorkUserController extends AdminController
      */
     protected function form()
     {
-        return Form::make(new WxWorkUser(), function (Form $form) {
+        return Form::make(new Task(), function (Form $form) {
             $form->display('id');
-            $form->text('sender');
-            $form->text('sender_name');
-            $form->text('zt_store_code');
-            $form->text('nostoremsg');
-
+            $form->text('name');
+            $form->text('description');
+            $form->text('command_class');
+            $form->select('schedule_type')->options(['daily'=>'每天', 'hourly'=>'N小时', 'every_minutes'=>'N分钟']);
+            $form->text('schedule_value');
             $form->display('created_at');
             $form->display('updated_at');
         });

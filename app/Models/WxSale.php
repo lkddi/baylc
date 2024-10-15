@@ -25,6 +25,10 @@ class WxSale extends Model
 
     }
 
+    public function workuser()
+    {
+        return $this->belongsTo(WxWorkUser::class,'from_wxid','sender');
+    }
     public function company()
     {
         return $this->belongsTo(ZtCompany::class,'zt_company_id','id');

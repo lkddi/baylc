@@ -8,15 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class WorkMessage extends Model
 {
-	use HasDateTimeFormatter;
+    use HasDateTimeFormatter;
+
 
     /**
-     * 不可被批量赋值的属性。
+     * 可批量赋值的属性。
      *
      * @var array
      */
-    protected $guarded = [];
-
-    protected $table = 'work_messages';
+    protected $fillable = [
+        'client_id',
+        'message_type',
+        'message_data',
+        'state'
+    ];
 
 }

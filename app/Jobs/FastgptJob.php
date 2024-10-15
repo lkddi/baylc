@@ -15,17 +15,17 @@ class FastgptJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $data;
+    public $gptid;
 
-
-    public function __construct($data)
+    public function __construct($data,$gptid = 1)
     {
         $this->data = $data;
+        $this->gptid = $gptid;
     }
 
 
     public function handle()
     {
-
         $lockKey = 'job_lock_fast' . $this->uniqueJobIdentifier();
         $num = Cache::get($lockKey . 'id') ?? 0;
         if (cache()->has($lockKey)) {
@@ -37,7 +37,8 @@ class FastgptJob implements ShouldQueue
 
         try {
             Cache::put($lockKey . 'id', $num + 1);
-            $fast = app(FastgptService::class);
+//            $fast = app(FastgptService::class);
+            $fast = new FastgptService($this->gptid);
             $fast->sendMessage($this->data, $lockKey);
         } finally {
             // 确保在任务完成后释放锁

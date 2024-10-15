@@ -21,7 +21,6 @@ class ConsumeRabbitMQ extends Command
     protected $description = 'Consume messages from RabbitMQ';
 
     protected $connection;
-
     public function __construct(AMQPStreamConnection $connection)
     {
         parent::__construct();
@@ -77,6 +76,7 @@ class ConsumeRabbitMQ extends Command
                             $user = $data['message_data']['conversation_id'];
                         }
                         $mess = [
+                            "guid" =>$data['client_id'],
                             "conversation_id" => $user,
                             "content" => $message['data']
                         ];
@@ -87,6 +87,7 @@ class ConsumeRabbitMQ extends Command
                         if (isset($data['message_data']['conversation_id'])) {
                             $uid = $e->getData();
                             $mess = [
+                                "guid" =>$data['client_id'],
                                 "conversation_id" => $data['message_data']['conversation_id'],
                                 "content" => $message['data']
                             ];

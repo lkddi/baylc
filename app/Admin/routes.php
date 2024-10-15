@@ -70,8 +70,7 @@ Route::group([
         'wxuserlist'=>WxUserListController::class,
         'inventorylog'=>InventoryLogController::class,
         'welcome'=>GroupWelcomeMessageController::class,
-
-
+        'task'=>\App\Admin\Controllers\TaskController::class,
 
     ]);
 
