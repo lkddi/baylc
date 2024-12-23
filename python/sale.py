@@ -46,6 +46,7 @@ if __name__ == '__main__':
 
         for future in as_completed(futures):
             c = future.result()
+            print(c)
             if len(c["content"]) == 0:
                 continue
 

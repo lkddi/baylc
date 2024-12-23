@@ -4,14 +4,15 @@ namespace App\Services;
 
 use App\Jobs\FastgptJob;
 use App\Jobs\SendMessageWorkJob;
+use App\Models\WxBot;
 use Cache;
 use http\Client;
 use Illuminate\Support\Facades\Http;
 
 class FastgptService
 {
-    public $HOST_URL = 'https://c.ay.lc/api';
-    public $API_KEY = 'fastgpt-dElmFRIpLlZAVoO5PUzn9CtMSm7Uxo2a0Iml6ptGp60yfK7bfYNKf7sUeNDJsPtd';
+    public $HOST_URL = 'http://n.ay.lc:3005/api';
+    public $API_KEY = 'fastgpt-tzXz0Ip3AzkanEOZmfKo7o9qrSW0LUzBWTPYu1EfIICsyemfXGoqJ7jD';
 //    public $API_KEY = 'fastgpt-lAbUf64vzzZ37PEWesEDKMYVjipEnbUPlK9WpOknzR3ObHVsH6SvHm7ZQ';
 
     public $data;
@@ -22,10 +23,10 @@ class FastgptService
         $gptid;
         if ($gptid == 1) {
             // 小助手模型
-            $this->API_KEY = 'fastgpt-dElmFRIpLlZAVoO5PUzn9CtMSm7Uxo2a0Iml6ptGp60yfK7bfYNKf7sUeNDJsPtd';
+            $this->API_KEY = 'fastgpt-tzXz0Ip3AzkanEOZmfKo7o9qrSW0LUzBWTPYu1EfIICsyemfXGoqJ7jD';
         } elseif ($gptid == 2) {
             // 润色模型
-            $this->API_KEY = 'fastgpt-juUgnVhvc4vEGLCxkX18BfLTHCFTjBicBRTOwcngcSb94QWwF1nj4r';
+            $this->API_KEY = 'fastgpt-qHEhJ0cWV5Bo5dUmVasYHBLkvjTWTVkJ8oUF8vNEPgxj8uO6n0OR686QEK9';
 
         }
     }
@@ -33,12 +34,13 @@ class FastgptService
     public function sendMessage($data, $id = null)
     {
         $this->data = $data;
-        $Id = $data['sender'] . $data['conversation_id'];
+
+        $Id = $data['message_data']['sender'] . $data['message_data']['conversation_id'];
         Cache::add($Id, md5($Id . now()), 600);
-        if (count($data['at_list']) > 1) {
+        if (count($data['message_data']['at_list']) > 1) {
             return false;
         }
-        foreach ($data['at_list'] as $user) {
+        foreach ($data['message_data']['at_list'] as $user) {
             // 检查 user_id 是否为 1688856965630846
             if ($user['user_id'] === '1688856965630846') {
                 $this->sendAi($user);
@@ -49,8 +51,8 @@ class FastgptService
     public function sendAi($user)
     {
         $data = $this->data;
-        $Id = $data['sender'] . $data['conversation_id'];
-        $content = $data['content'];
+        $Id = $data['message_data']['sender'] . $data['message_data']['conversation_id'];
+        $content = $data['message_data']['content'];
         $nickname = '@' . $user['nickname'];
         $content = str_replace($nickname, '', $content);
         // 移除空格
@@ -65,8 +67,8 @@ class FastgptService
             "stream" => false,
             "detail" => false,//detail: 是否返回中间值（模块状态，响应的完整结果等），stream模式下会通过event进行区分，非stream模式结果保存在responseData中。
             "variables" => [//variables: 模块变量，一个对象，会替换模块中，输入框内容里的{{key}}
-                "uid" => $data['sender'],
-                "name" => $data['sender_name']
+                "uid" => $data['message_data']['sender'],
+                "name" => $data['message_data']['sender_name']
             ],
             "messages" => [  //messages: 结构与 GPT接口 chat模式一致。
                 [
@@ -79,10 +81,14 @@ class FastgptService
         if ($response->successful()) {
             $message = $response->json();
             $contentWithoutSpecialChars = str_replace(["*", "_"], "", $message['choices'][0]['message']['content']);
+//            $bot = WxBot::find(3);
+//            $send['guid'] = $bot->guid;
             $send['content'] = $contentWithoutSpecialChars;
-            $send['guid'] = $data['sender'];
-            $send['conversation_id'] = $data['conversation_id'];
-            SendMessageWorkJob::dispatch($send, '/msg/send_text');
+            $send['guid'] = $data['client_id'];
+            $send['conversation_id'] = $data['message_data']['conversation_id'];
+//            SendMessageWorkJob::dispatch($send, '/msg/send_text');
+            QyWechatData::send_work_api($send, '/msg/send_text');
+
 
             return true;
         } else {
@@ -126,8 +132,11 @@ class FastgptService
         if ($response->successful()) {
             $message = $response->json();
             $contentWithoutSpecialChars = str_replace(["*", "_"], "", $message['choices'][0]['message']['content']);
+            $bot = WxBot::find(3);
+            $send['guid'] = $bot->guid;
             $send['content'] = $contentWithoutSpecialChars;
             $send['conversation_id'] = $to;
+            \Log::info($send);
             SendMessageWorkJob::dispatch($send, '/msg/send_text');
             return true;
         } else {

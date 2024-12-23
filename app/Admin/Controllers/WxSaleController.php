@@ -63,7 +63,8 @@ class WxSaleController extends AdminController
             $grid->column('quantity')->sortable();
             $grid->column('product.price');
             $grid->column('amount');
-
+            // 添加样式 字体大小
+            $grid->addTableClass(['small']);
             // 添加不存在的字段
             $grid->column('提成金额')->display(function () {
                 return $this->quantity * $this->amount;
@@ -73,6 +74,7 @@ class WxSaleController extends AdminController
             });
             $grid->column('workuser.sender_name');
             $grid->column('created_at');
+//            $grid->column('updated_at')->sortable();
             //禁止插入
             $grid->disableCreateButton();
             //导出数据进行 关联数据替换
@@ -87,7 +89,7 @@ class WxSaleController extends AdminController
             $grid->selector(function (Grid\Tools\Selector $selector) {
                 if (Admin::user()->id ==1) $selector->select('zt_company_id', '分公司', \App\Models\ZtCompany::get()->pluck('name', 'id'));
 //                $selector->select('deptBigRegionName', '渠道', ZtDeptBigRegion::Company()->pluck('title', 'title'));
-//                $selector->select('canalTypeName', '渠道', ZtCanalType::Company()->pluck('title', 'title'));
+                $selector->select('store.canalTypeName', '渠道', ZtCanalType::Company()->pluck('title', 'title'));
             });
             //表格快捷搜索
             $grid->quickSearch(['store.name', 'product.model', 'wxuser.nickname', 'store.canalCategoryName', 'store.deptBigRegionName', 'store.retailName', 'store.nickname']);
@@ -95,7 +97,7 @@ class WxSaleController extends AdminController
             // 开启字段选择器功能
             $grid->showColumnSelector();
             // 设置默认隐藏字段
-            $grid->hideColumns(['store.code','store.deptRegionName','workuser.sender_name']);
+            $grid->hideColumns(['store.code','store.deptRegionName','workuser.sender_name','updated_at']);
             // 默认为每页20条
             $grid->paginate(30);
 
@@ -106,8 +108,9 @@ class WxSaleController extends AdminController
                 $filter->equal('store.deptBigRegionName', '大区')->select(ZtDeptBigRegion::Company()->pluck('title', 'title'));
                 $filter->equal('store.deptRegionName', '地区')->select(ZtDeptRegion::Company()->pluck('title', 'title'));
                 $filter->equal('store.retailName', '片区')->select(ZtRetail::Company()->pluck('title', 'title'));
-//                $filter->equal('store.canalCategoryName', '渠道')->select(ZtCanalType::Company()->pluck('title', 'title'));
+//                $filter->in('store.canalCategoryName')->multipleSelectTable(ZtCanalType::Company()->pluck('title', 'title'));
                 $filter->equal('zt_product_id', '型号')->select(ZtProduct::get()->pluck('title', 'id'));
+//                $filter->in('zt_product_id', '型号')->multipleSelectTable(['key' => 'value']);
                 $filter->whereBetween('created_at', function ($q) {
                     $start = $this->input['start'] ?? null;
                     $end = $this->input['end'] ?? null;

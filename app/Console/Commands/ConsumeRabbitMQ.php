@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class ConsumeRabbitMQ extends Command
@@ -21,25 +22,23 @@ class ConsumeRabbitMQ extends Command
     protected $description = 'Consume messages from RabbitMQ';
 
     protected $connection;
-    public function __construct(AMQPStreamConnection $connection)
-    {
-        parent::__construct();
-        $this->connection = $connection;
-    }
+
 
     public function handle()
     {
         echo '开始工作中...';
         try {
-            $channel = $this->connection->channel();
-        } catch (\PhpAmqpLib\Exception\AMQPRuntimeException $e) {
-            Log::error('Failed to connect to RabbitMQ: ' . $e->getMessage());
-            // 可以在这里增加重试逻辑
+            $mq = new AMQPStreamConnection(
+                env('RABBITMQ_HOST'),
+                env('RABBITMQ_PORT'),
+                env('RABBITMQ_USER'),
+                env('RABBITMQ_PASSWORD'));
+            $channel = $mq->channel();
+        } catch (AMQPRuntimeException $e) {
             sleep(5); // 等待5秒后重试
+            echo '等待5秒后重试...';
             return $this->handle(); // 递归调用自身
         }
-//        $channel = $this->connection->channel();
-        //        $queue = env('RABBITMQ_QUEUE');
         $queue = 'wechat_work';
 
         $channel->queue_declare($queue, false, true, false, false);
@@ -49,15 +48,11 @@ class ConsumeRabbitMQ extends Command
             echo '收到消息: ' . now() . "\n";
             //            echo '消息内容: '. $msg->body. "\n";
             $data = json_decode($msg->body, true);
-//            $add = $data;
-//            $add['message_data'] = json_encode($add['message_data']);
             // 信息类型type 如果是11187,11123,11051 则不保存到数据库,也不操作
             if (in_array($data['message_type'], [11187, 11123, 11051])) {
                 return;
             }
             Cache::put('client_id', $data['client_id']);
-//            WorkMessage::create($add);
-//            unset($add);
             try {
                 Log::info("收到的企业微信信息");
                 Log::info($data);
@@ -81,7 +76,6 @@ class ConsumeRabbitMQ extends Command
                             "content" => $message['data']
                         ];
                         QyWechatData::send_work_api($mess, '/msg/send_text');
-//                        QyWechatData::send_mq_msg($user,$message['data']);
 
                     } else {
                         if (isset($data['message_data']['conversation_id'])) {
@@ -109,13 +103,11 @@ class ConsumeRabbitMQ extends Command
                 Log::error('Channel error: ' . $e->getMessage());
                 // 重新声明队列或尝试重新连接
                 $channel->close();
-                $this->connection->close();
                 return $this->handle();
             }
         }
 
         $channel->close();
-        $this->connection->close();
     }
 
     public function getToUser($data)

@@ -52,6 +52,6 @@ class FastgptJob implements ShouldQueue
     {
         // 生成一个任务的唯一标识符，可以是任何可以唯一确定任务的值
         // 例如，你可以使用请求参数、用户ID、组合条件等
-        return md5($this->data['appinfo']);
+        return md5($this->data['message_data']['appinfo']);
     }
 }

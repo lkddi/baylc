@@ -28,19 +28,37 @@ Route::get('/', [\App\Http\Controllers\VlwController::class, 'index']);
 
 Route::get('/t', function (\Illuminate\Http\Request $request) {
 
-// 获取本月的第一天和最后一天
-    $firstDayOfMonth = Carbon::now()->startOfMonth();
-    $lastDayOfMonth = Carbon::now()->endOfMonth();
+    $today = Carbon::today()->toDateString();
+//    $sales = WxSale::with(['store', 'product'])->where('zt_company_id', 2)->whereDate('created_at', $today)->get();
 
-$store = ZtStore::find(13710);
-    $salesThisMonth = $store->wxsales()
-        ->whereBetween('created_at', [$firstDayOfMonth, $lastDayOfMonth])
-        ->sum('quantity');
-    Log::error($salesThisMonth);
-dd($salesThisMonth);
-
-//    $fast  =New FastgptService(2);
-//    $fast->sendFastgpt($num['message_data']['content'], $num['message_data']['conversation_id'],$num['message_data']['conversation_id']);
+    $a = array (
+        'client_id' => '961632a0-09ce-3880-95ea-92637305a563',
+        'message_type' => 11041,
+        'message_data' =>
+            array (
+                'appinfo' => '4477935335403118690',
+                'at_list' =>
+                    array (
+                        0 =>
+                            array (
+                                'nickname' => '董冬明',
+                                'user_id' => '1688856965630846',
+                            ),
+                    ),
+                'content' => '@董冬明 今天几号',
+                'content_type' => 2,
+                'conversation_id' => 'R:10921933120267894',
+                'is_pc' => 0,
+                'local_id' => '34938',
+                'quote_content' => '',
+                'receiver' => '1688856965630846',
+                'send_time' => '1730478211',
+                'sender' => '7881302503935047',
+                'sender_name' => '松下董冬明¹⁵³⁸⁹⁸¹⁴¹¹⁴',
+                'server_id' => '1116413',
+            ),
+    );
+ Log::info(1);
 
 });
 

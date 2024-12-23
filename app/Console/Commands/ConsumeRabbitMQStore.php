@@ -16,6 +16,8 @@ use Exception;
 use Illuminate\Console\Command;
 use Log;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
+use PhpAmqpLib\Exception\AMQPIOException;
+use PhpAmqpLib\Exception\AMQPRuntimeException;
 use PhpAmqpLib\Message\AMQPMessage;
 
 class ConsumeRabbitMQStore extends Command
@@ -25,59 +27,59 @@ class ConsumeRabbitMQStore extends Command
 
     protected $connection;
 
-    public function __construct(AMQPStreamConnection $connection)
-    {
-        parent::__construct();
-        $this->connection = $connection;
-    }
 
     public function handle()
     {
         echo '开始消费' . "\n";
         try {
-            $channel = $this->connection->channel();
-            $queue = 'zt_store';
+            $mq = new AMQPStreamConnection(
+                env('RABBITMQ_HOST'),
+                env('RABBITMQ_PORT'),
+                env('RABBITMQ_USER'),
+                env('RABBITMQ_PASSWORD'));
+            $channel = $mq->channel();
+        } catch (AMQPIOException $e) {
+            // 可以在这里增加重试逻辑
+            sleep(5); // 等待5秒后重试
+            print_r('等待5秒后重试');
+            return $this->handle(); // 递归调用自身
+        }
 
-            $channel->queue_declare($queue, false, true, false, false);
+        $queue = 'zt_store';
 
-            $callback = function (AMQPMessage $msg) use ($channel) {
-                try {
-                    $data = json_decode($msg->body, true);
-                    echo '收到消息: ' . now() . "\n";
-//                    echo '消息内容: ' . $msg->body . "\n";
-//                    ProcessStors::dispatch($data);
-                    $this->addData($data);
-                    $channel->basic_ack($msg->getDeliveryTag());
-                } catch (\Exception $e) {
-                    // 处理错误，可能的话重新入队
-                    $channel->basic_nack($msg->getDeliveryTag());
-                    Log::error('Error processing message: ' . $e->getMessage());
-                }
-            };
+        $channel->queue_declare($queue, false, true, false, false);
 
-            $channel->basic_qos(null, 1, null);
-            $channel->basic_consume($queue, '', false, false, false, false, $callback);
+        $callback = function (AMQPMessage $msg) use ($channel) {
+            $data = json_decode($msg->body, true);
+            echo '收到消息: ' . now() . "\n";
+            $this->addData($data);
+            echo '处理完成: ' . now() . "\n";
+        };
 
-            while ($channel->is_consuming()) {
+//        $channel->basic_qos(null, 1, null);
+
+        $channel->basic_consume($queue, '', false, true, false, false, $callback);
+
+        while ($channel->is_consuming()) {
+            try {
                 $channel->wait();
+            } catch (AMQPIOException $e) {
+                Log::error('RabbitMQ Error: ' . $e->getMessage());
+                // 实现重连逻辑
+                return $this->handle();
+
             }
-        } catch (\Exception $e) {
-            Log::error('RabbitMQ Error: ' . $e->getMessage());
-            // 实现重连逻辑
-        } finally {
-            $channel->close();
-            $this->connection->close();
         }
     }
 
     public function addData($data)
     {
         try {
-            echo $data['code']. "\n";
+            echo $data['code'] . "\n";
             ZtStore::updateOrCreate(
                 [
                     'code' => $data['code'],
-                    'zt_company_id'=>$data['company']
+                    'zt_company_id' => $data['company']
                 ],
                 [
                     'name' => $data['name'],
@@ -105,16 +107,18 @@ class ConsumeRabbitMQStore extends Command
                     'ext23' => $data['ext23'],
                 ]
             );
-            $this->createOrUpdateRegion(ZtDeptBigRegion::class, $data['deptBigRegionCode'], $data['deptBigRegionName'],$data['company']);
-            $this->createOrUpdateRegion(ZtDeptRegion::class, $data['deptRegionCode'], $data['deptRegionName'],$data['company']);
-            $this->createOrUpdateRegion(ZtRetail::class, $data['retailCode'], $data['retailName'],$data['company']);
-            $this->createOrUpdateRegion(ZtCanalType::class, $data['canalTypeCode'], $data['canalTypeName'],$data['company']);
+            $this->createOrUpdateRegion(ZtDeptBigRegion::class, $data['deptBigRegionCode'], $data['deptBigRegionName'], $data['company']);
+            $this->createOrUpdateRegion(ZtDeptRegion::class, $data['deptRegionCode'], $data['deptRegionName'], $data['company']);
+            $this->createOrUpdateRegion(ZtRetail::class, $data['retailCode'], $data['retailName'], $data['company']);
+            $this->createOrUpdateRegion(ZtCanalType::class, $data['canalCategoryCode'], $data['canalCategoryName'], $data['company']);
+            return true;
         } catch (\Exception $e) {
             // 捕获异常并记录日志
             Log::error('处理队列任务时发生异常：' . $e->getMessage());
         }
     }
-    private function createOrUpdateRegion($modelClass, $code, $name,$companyid)
+
+    private function createOrUpdateRegion($modelClass, $code, $name, $companyid)
     {
         try {
             if (!empty($code)) {

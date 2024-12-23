@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Grid\ImportProduct;
 use App\Admin\Repositories\ZtProduct;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
@@ -29,6 +30,11 @@ class ZtProductController extends AdminController
 //            $grid->column('created_at');
             $grid->column('updated_at')->sortable();
 
+
+            $grid->tools(function (Grid\Tools $tools) {
+                // excle 导入
+                $tools->append(new ImportProduct());
+            });
             //禁止插入
 //            $grid->disableCreateButton();
             //启用数据导出

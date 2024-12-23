@@ -60,13 +60,14 @@ class PersonalMessageHandler implements MessageHandlerInterface
                                 $product = new ZtProduct();
                                 $product->title = $x[1];
                                 $product->model = $x[0];
+                                $product->price = $x[2] ?? 0;
                                 $product->save();
                                 $mess['send_user'] = 0;
                                 $mess['data'] = $x[0] . ' 型号增加成功!';
                                 throw new WokeException('ok', $mess);
                             } else {
                                 $mess['send_user'] = 0;
-                                $mess['data'] = $x[0].':该型号已经存在，请勿重复增加!';
+                                $mess['data'] = $x[0] . ':该型号已经存在，请勿重复增加!';
                                 throw new WokeException('ok', $mess);
                             }
                         }
@@ -79,7 +80,7 @@ class PersonalMessageHandler implements MessageHandlerInterface
                 }
 
                 // 开启智能聊天
-                if ($group->ai){
+                if ($group->ai) {
                     // 检查 at_list 是否有内容
                     if (!empty($message_data['at_list'])) {
                         // 遍历 at_list 数组
@@ -92,7 +93,19 @@ class PersonalMessageHandler implements MessageHandlerInterface
                                 $content = str_replace($nickname, '', $content);
                                 // 移除空格
                                 $content = trim($content);
-                                FastgptJob::dispatch($message_data);
+                                FastgptJob::dispatch($message);
+                            }
+                        }
+                    }
+                } else {
+                    if (!empty($message_data['at_list'])) {
+                        // 遍历 at_list 数组
+                        foreach ($message_data['at_list'] as $user) {
+                            // 检查 user_id 是否为 1688856965630846
+                            if ($user['user_id'] === '1688856965630846') {
+                                $mess['send_user'] = 0;
+                                $mess['data'] = '我是销售小助手（机器人），有任何问题请联系负责业务经理!';
+                                throw new WokeException('ok', $mess, 1);
                             }
                         }
                     }
@@ -127,11 +140,17 @@ class PersonalMessageHandler implements MessageHandlerInterface
                         return;
                     }
                 }
+
+                if ($content != '我是销售小助手（机器人），有任何问题请联系负责业务经理!!!') {
+                    if ($message_data['sender'] == '1688856965630846') return
+                        $mess['send_user'] = 0;
+                    $mess['data'] = '我是销售小助手（机器人），有任何问题请联系负责业务经理!!!';
+                    throw new WokeException('ok', $mess, 1);
+                }
             }
 
 
             if ($content == '123') {
-//                echo '收到主人问话: ' . $content . "\n";
                 $mess['send_user'] = 0;
                 $mess['data'] = '我是销售小助手，我在，随时为你工作!';
                 throw new WokeException('ok', $mess, 1);

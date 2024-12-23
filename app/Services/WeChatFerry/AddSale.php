@@ -12,6 +12,7 @@ use App\Servers\Server;
 use App\Services\FastgptService;
 use Carbon\Carbon;
 use Exception;
+use Log;
 
 class AddSale
 {
@@ -22,9 +23,9 @@ class AddSale
      */
     public static function AddSale($data)
     {
-        if (isset($data['message_data']['remark'])){
+        if (isset($data['message_data']['remark'])) {
             $remarkParts = explode(' ', $data['message_data']['remark']);
-        }else{
+        } else {
             $title = str_replace('增加 ', '', $data['message_data']['content']);
             $remarkParts = explode(' ', $title);
 
@@ -32,8 +33,10 @@ class AddSale
         $storename = $remarkParts[0];
         $model = $remarkParts[1];
 
+//        Log::info($remarkParts);
         if ($data['message_data']['sender_name']) {
-            $msg = '[' . $data['message_data']['sender_name'] . ']:';
+//            $msg = '[' . $data['message_data']['sender_name'] . ']:';
+            $msg = '';
         } else {
             $msg = '';
         }
@@ -52,7 +55,12 @@ class AddSale
                 throw new WokeException('ok', $mess);
             }
 //            $num = is_numeric($remarkParts[3]) && $remarkParts[3] != 0 ? $remarkParts[3] : 1;
-            $num = $remarkParts[3] ?? 1;
+//            $num = $remarkParts[3] ?? 1;
+            if (empty($remarkParts[3])) {
+                $num = 1;
+            } else {
+                $num = $remarkParts[3];
+            }
             $wxSale = new WxSale();
             $wxSale->model = $models->title;
             $wxSale->zt_product_id = $models->id;
@@ -60,7 +68,7 @@ class AddSale
             $wxSale->zt_store_id = $store->id;
             $wxSale->zt_store_code = $store->code;
             $wxSale->quantity = $num;
-            $wxSale->amount = is_numeric($remarkParts[2]) ?? 0;
+            $wxSale->amount = $remarkParts[2] ?? 0;
             $wxSale->price = $models->price;
             $wxSale->from_group = $group;
             $wxSale->from_wxid = $data['message_data']['sender'];
@@ -84,18 +92,34 @@ class AddSale
             $firstDayOfMonth = Carbon::now()->startOfMonth();
             $lastDayOfMonth = Carbon::now()->endOfMonth();
 
-            $sales = $store->wxsales()
+//            $sales = $store->wxsales()
+//                ->whereBetween('created_at', [$firstDayOfMonth, $lastDayOfMonth])
+//                ->sum('quantity');
+//            $ss = '';
+//            if ($sales>5){
+//                $ss = '本月已经累计销售'.$sales.'台';
+//            }
+            // 首先查询销售数量和总金额
+            $salesData = $store->wxsales()
                 ->whereBetween('created_at', [$firstDayOfMonth, $lastDayOfMonth])
-                ->sum('quantity');
-            $ss = '';
-            if ($sales>5){
-                $ss = '本月已经累计销售'.$sales.'台';
+                ->selectRaw('sum(quantity) as total_quantity, sum(amount * quantity) as total_amount')
+                ->first();
+
+            // 获取销售数量
+            $sales = $salesData->total_quantity;
+
+            // 获取总销售金额
+            $totalAmount = $salesData->total_amount;
+
+            // 根据销售数量判断并生成消息
+            if ($salesData) {
+                $ss = PHP_EOL . "本月已经累计销售{$sales}台，累计获得红包{$totalAmount}元" . PHP_EOL;
             }
 
             $company = $store->zt_company_id;
-            $mess['send_user']=0;
-            $mess['data'] = $msg . "门店:[".$storename . '] 销售 ' . $model . ' ' . $num . '台,登记成功!'.$ss;
-            throw new WokeException('ok',$mess, $company);
+            $mess['send_user'] = 0;
+            $mess['data'] = $msg . "恭喜门店:" . $store->name . '(' . $storename . ') :' . PHP_EOL . '销售松下' . $models->title . ' ' . $num . '台，获得红包 ' . $remarkParts[2] * $num . '元!' . $ss . '大卖大卖大卖[庆祝]';
+            throw new WokeException('ok', $mess, $company);
         } catch (WokeException $e) {
             throw $e;
         }

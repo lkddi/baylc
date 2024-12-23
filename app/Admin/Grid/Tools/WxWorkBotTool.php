@@ -59,8 +59,9 @@ class WxWorkBotTool extends AbstractTool
         $data['guid'] = Cache::get('client_id');
         $data['page_num'] = 1;
         $data['page_size'] = 500;
-        $request = QyWechatData::send_work_api($data,'/room/get_rooms');
+        $request = QyWechatData::send_work_api_return($data,'/room/get_rooms');
         $request = json_decode($request, true);
+        \Log::info($request);
         if (isset($request['data']['room_list']) && count($request['data']['room_list'])>0) {
             foreach ($request['data']['room_list'] as $room) {
                 WxWork::updateOrCreate(

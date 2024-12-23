@@ -35,8 +35,8 @@ if __name__ == '__main__':
     number = 10
     MAX_WORKERS = 20
     # 获取总条数
-#     sums = zt_store_count()
-    sums = 100
+    sums = zt_store_count()
+    # sums = 10
 
     all_send_futures = []
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
@@ -49,6 +49,7 @@ if __name__ == '__main__':
             if len(c["content"]) == 0:
                 continue
 
+            # print("采集到门店信息:{}".format(len(c["content"]["id"])))
             # 创建一个新的线程池来发送消息
             with ThreadPoolExecutor(max_workers=MAX_WORKERS) as send_executor:
                 send_futures = [send_executor.submit(send_store_message, a) for a in c["content"]]

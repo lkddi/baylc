@@ -109,3 +109,5 @@ Route::get('store',[StoreController::class,'index']);
 Route::post('store',[StoreController::class,'save']);
 
 Route::apiResource('bot',BotController::class);
+
+

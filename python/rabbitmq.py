@@ -4,13 +4,18 @@ import pika
 import time
 
 # 在文件头部设置配置信息
-HOST = '39.104.239.212'
-# HOST = '10.0.0.100'
-PORT = 5672
-USERNAME = 'lkddi'
-PASSWORD = 'ddmabc123,./'
-QUEUE_NAME = 'wechat'
+# HOST = '39.104.239.212'
+# # HOST = '10.0.0.100'
+# PORT = 5672
+# USERNAME = 'lkddi'
+# PASSWORD = 'ddmabc123,./'
+# QUEUE_NAME = 'wechat'
 
+HOST = '10.10.11.30'
+PORT = 30672
+USERNAME = 'admin'
+PASSWORD = 'ddmabc123.'
+QUEUE_NAME = 'wechat'
 
 class RabbitMQSender:
     def __init__(self, host, port, username, password, queue_name):

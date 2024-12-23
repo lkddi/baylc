@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use Admin;
+use App\Admin\Grid\ImportStore;
 use App\Admin\Repositories\ZtStore;
 use App\Models\ZtCanalType;
 use App\Models\ZtCompany;
@@ -11,8 +12,8 @@ use App\Models\ZtDeptRegion;
 use App\Models\ZtRetail;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
-use Dcat\Admin\Show;
 use Dcat\Admin\Http\Controllers\AdminController;
+use Dcat\Admin\Show;
 
 class ZtStoreController extends AdminController
 {
@@ -49,7 +50,8 @@ class ZtStoreController extends AdminController
                 $selector->select('deptBigRegionName', '渠道', ZtDeptBigRegion::Company()->pluck('title', 'title'));
                 $selector->select('canalTypeName', '渠道', ZtCanalType::Company()->pluck('title', 'title'));
             });
-
+            // 添加样式 字体大小
+            $grid->addTableClass(['small']);
             //禁止插入
             $grid->disableCreateButton();
 
@@ -66,6 +68,16 @@ class ZtStoreController extends AdminController
                 $filter->equal('deptRegionName','地区')->select(ZtDeptRegion::Company()->pluck('title', 'title'));
                 $filter->equal('deptBigRegionName','大区')->select(ZtDeptBigRegion::Company()->pluck('title', 'title'));
             });
+
+//            $grid->tools(new ImportStore());
+            $grid->tools(function (Grid\Tools $tools) {
+                // excle 导入
+                $tools->append(new ImportStore());
+            });
+//            $grid->actions([new \App\Admin\Forms\ZtStore()]);
+//            $grid->tools(function (Grid\Tools $tools) {
+//                $tools->append($this->buildPreviewButton());
+//            });
 
 //            $grid->selector(function (Grid\Tools\Selector $selector) {
 //                $selector->select('deptBigRegionName', '大区', ZtDeptBigRegion::get()->pluck('title', 'title'));
@@ -105,14 +117,12 @@ class ZtStoreController extends AdminController
             $form->display('id');
             $form->text('name');
             $form->text('storename');
-            $form->text('nickname');
+            $form->text('nickname')->rules('required|unique:zt_stores,nickname',['unique' => '简称已存在']);
             $form->text('advance');
             $form->text('canalCategoryName');
             $form->text('retailName');
             $form->text('deptRegionName');
             $form->text('deptBigRegionName');
-
-
             $form->display('created_at');
             $form->display('updated_at');
         });

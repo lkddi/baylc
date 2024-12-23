@@ -20,12 +20,6 @@ class ConsumeRabbitMQSales extends Command
 
     protected $connection;
 
-    public function __construct(AMQPStreamConnection $connection)
-    {
-        parent::__construct();
-        $this->connection = $connection;
-    }
-
     public function handle()
     {
         $this->consumeMessages();
@@ -35,7 +29,12 @@ class ConsumeRabbitMQSales extends Command
     {
 
         try {
-            $channel = $this->connection->channel();
+            $mq = new AMQPStreamConnection(
+                env('RABBITMQ_HOST'),
+                env('RABBITMQ_PORT'),
+                env('RABBITMQ_USER'),
+                env('RABBITMQ_PASSWORD'));
+            $channel = $mq->channel();
         } catch (\PhpAmqpLib\Exception\AMQPRuntimeException $e) {
             Log::error('Failed to connect to RabbitMQ: ' . $e->getMessage());
             // 可以在这里增加重试逻辑

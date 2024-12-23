@@ -6,7 +6,9 @@ use Admin;
 use App\Admin\Extensions\Tools\WxGroupsUser;
 use App\Admin\Grid\Tools\WxWorkBotTool;
 use App\Admin\Repositories\WxWork;
+use App\Models\WxBot;
 use App\Models\ZtCompany;
+use App\Services\QyWechatData;
 use Dcat\Admin\Form;
 use Dcat\Admin\Grid;
 use Dcat\Admin\Show;
@@ -28,7 +30,7 @@ class WxWorkController extends AdminController
             }
 
             $grid->model()->orderBy('retailCode', 'desc');
-            if (Admin::user()->id ==1) $grid->column('companys.name');
+            if (Admin::user()->id ==1) $grid->column('zt_company_id')->select(ZtCompany::get()->pluck('name', 'id'));
             $grid->column('roomid');
             $grid->column('roomname')->editable();
 //            if (Admin::user()->id ==1) $grid->column('company.name');
@@ -55,10 +57,10 @@ class WxWorkController extends AdminController
 //            $grid->disableDeleteButton();
             // 禁用批量删除
             $grid->disableBatchDelete();
-            $grid->batchActions([
-                new WxGroupsUser('退群删除群用户', 1),
-//                new WxGroupsUser('更新群成员信息', 1)
-            ]);
+//            $grid->batchActions([
+//                new WxGroupsUser('退群删除群用户', 1),
+////                new WxGroupsUser('更新群成员信息', 1)
+//            ]);
             //表格快捷搜索
             $grid->quickSearch(['wxid', 'username','company.name']);
             $grid->filter(function (Grid\Filter $filter) {
@@ -119,14 +121,21 @@ class WxWorkController extends AdminController
             $form->display('created_at');
             $form->display('updated_at');
 
-//            $form->saved(function (Form $form) {
-//                $user = $form->user;
-//                $wxid = $form->model()->wxid;
-//                if ($user) {
-//                    EventGroupMemberAdd::GetGroupMember('wxid_pruy5b5gm0bg12', $wxid, 1);
-//                }
-//
-//            });
+            $form->saved(function (Form $form) {
+
+                $data = $form->updates();
+                $wx = $form->model();
+                if (isset($data['isadd']) && $data['isadd']){
+                    $bot = WxBot::find(3);
+                    $mess = [
+                        "guid" => $bot->clientId,
+                        "conversation_id" => $wx['roomid'],
+                        "content" => '销售登记功能已经开启！！！我只是机器人，不会回答你任何问题！'
+                    ];
+                    QyWechatData::send_work_api($mess, '/msg/send_text');
+                }
+
+            });
         });
 
 

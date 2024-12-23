@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Resources\ZtStoreResource;
+use App\Models\ZtCanalType;
+use App\Models\ZtRetail;
 use App\Models\ZtStore;
 use Cache;
+use Dcat\Admin\Admin;
 use Illuminate\Http\Request;
 
 class StoreController extends Controller

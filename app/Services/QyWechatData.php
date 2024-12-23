@@ -268,22 +268,40 @@ class QyWechatData
     public static function send_work_api($data, $url)
     {
         try {
+            $api_url = 'http://10.0.0.130:8000' . $url;
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+            ])->post($api_url, $data);
+//        Log::info($data);
+//        Log::info($response);
+            $res = $response->json();
+            if (!$res['status']) {
+                sleep(5);
+//                SendMessageWorkJob::dispatch($data, $api_url);
+                self::send_work_api($data,$url);
+                return false;
+            }
+            return true;
+        } catch (Exception $e) {
+            Log::error($url);
+            Log::error($e->getMessage());
+//            SendMessageWorkJob::dispatch($data, $api_url);
+            sleep(5);
+            self::send_work_api($data,$url);
+            return true;
+        }
+
+    }
+
+    public static function send_work_api_return($data, $url)
+    {
             $url = 'http://10.0.0.130:8000' . $url;
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
             ])->post($url, $data);
 //        Log::info($data);
 //        Log::info($response);
-            $res = $response->json();
-            if (!$res['status']) {
-                SendMessageWorkJob::dispatch($data, $url);
-                return false;
-            }
-            return true;
-        } catch (Exception $e) {
-            SendMessageWorkJob::dispatch($data, $url);
-            return true;
-        }
+            return $response;
 
     }
 
