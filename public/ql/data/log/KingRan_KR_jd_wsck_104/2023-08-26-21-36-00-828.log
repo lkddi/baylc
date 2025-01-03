@@ -1,9 +1,0 @@
-## 开始执行... 2023-08-26 21:36:00
-
-Traceback (most recent call last):
-  File "/ql/data/scripts/KingRan_KR/jd_wsck.py", line 1, in <module>
-    from requests import get, post, put, packages
-ModuleNotFoundError: No module named 'requests'
-
-
-## 执行结束... 2023-08-26 21:36:01  耗时 1 秒　　　　　

@@ -86,6 +86,9 @@ class WxSaleDayCommand extends Command
 
         // 计算整体金额及台量汇总
         $overallTotalQuantity = $sales->sum('quantity');
+        if (!$overallTotalQuantity){
+            return;
+        }
         $overallTotalPrice = $sales->sum(function ($sale) {
             return $sale->product->price * $sale->quantity;
         });
@@ -102,6 +105,7 @@ class WxSaleDayCommand extends Command
             "conversation_id" => $to,
             "content" => $mes
         ];
+
         QyWechatData::send_work_api($mess, '/msg/send_text');
     }
 
@@ -143,6 +147,9 @@ class WxSaleDayCommand extends Command
         $summaryArray = $summary->sortByDesc('total_quantity')->values()->all();
         // 计算整体金额及台量汇总
         $overallTotalQuantity = $sales->sum('quantity');
+        if (!$overallTotalQuantity){
+            return;
+        }
         $overallTotalPrice = $sales->sum(function ($sale) {
             return $sale->product->price * $sale->quantity;
         });
@@ -158,6 +165,7 @@ class WxSaleDayCommand extends Command
             "conversation_id" => $to,
             "content" => $mes
         ];
+
         QyWechatData::send_work_api($mess, '/msg/send_text');
     }
 

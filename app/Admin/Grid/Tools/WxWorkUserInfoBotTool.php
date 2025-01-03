@@ -10,9 +10,11 @@ use Cache;
 use Dcat\Admin\Grid\Tools\AbstractTool;
 use Illuminate\Http\Request;
 
-class WxWorkBotTool extends AbstractTool
+class WxWorkUserInfoBotTool extends AbstractTool
 {
     /**
+     *
+     * 更新企业已经记录的好友的信息
      * 按钮样式定义，默认 btn btn-white waves-effect
      *
      * @var string

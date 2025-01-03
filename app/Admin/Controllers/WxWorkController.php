@@ -28,11 +28,13 @@ class WxWorkController extends AdminController
             if (Admin::user()->id !=1) {
                 $grid->model()->company();
             }
+            $grid->addTableClass(['small']);
 
             $grid->model()->orderBy('retailCode', 'desc');
             if (Admin::user()->id ==1) $grid->column('zt_company_id')->select(ZtCompany::get()->pluck('name', 'id'));
             $grid->column('roomid');
-            $grid->column('roomname')->editable();
+            $grid->column('roomname');//->editable()
+            $grid->column('total');//->editable()
 //            if (Admin::user()->id ==1) $grid->column('company.name');
             $grid->column('user')->switch();
             $grid->column('photo')->switch();

@@ -14,7 +14,7 @@ class HomeController extends Controller
     {
         return $content
             ->header('POS')
-            ->description('Purchase on sales ')
+            ->description('微信红包销售登记系统')
             ->body(function (Row $row) {
                 $row->column(6, function (Column $column) {
                     $column->row(Dashboard::title());
@@ -23,7 +23,7 @@ class HomeController extends Controller
 
                 $row->column(6, function (Column $column) {
                     $column->row(function (Row $row) {
-                        $row->column(6, new Examples\NewUsers());
+                        $row->column(6, new Examples\NewSales());
                         $row->column(6, new Examples\NewDevices());
                     });
 

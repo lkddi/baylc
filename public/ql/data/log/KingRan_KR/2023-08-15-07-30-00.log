@@ -1,6 +1,0 @@
-## 开始执行... 2023-08-15 07:30:00
-
-/bin/bash: -c: line 1: syntax error near unexpected token `|'
-/bin/bash: -c: line 1: `SUB_ID=1 ql repo "https://github.com/KingRan/KR.gitql repo https://github.com/KingRan/KR.git "jd_|jx_|jdCookie" "activity|backUp" "^jd[^_]|USER|utils|function|sign|sendNotify|ql|JDJR"" "jd_|jx_|jdCookie" "activity|backUp" "^jd[^_]|USER|utils|function|sign|sendNotify|ql|JDJR" "" "" "" "true" "true"'
-
-## 执行结束... 2023-08-15 07:30:00  耗时 0 秒　　　　　
