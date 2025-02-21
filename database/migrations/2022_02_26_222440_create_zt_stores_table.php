@@ -47,6 +47,7 @@ return new class extends Migration
             $table->integer('new')->default(0)->nullable()->comment('更新键值');
 
             $table->timestamps();
+            $table->unique(['zt_company_id', 'code'], 'unique_zt_company_id_code');
         });
     }
 

@@ -25,10 +25,11 @@ class ZtStoreController extends AdminController
     protected function grid()
     {
         return Grid::make(new ZtStore(), function (Grid $grid) {
-            $grid->model()->Company();
+            if (!Admin::user()->isAdministrator()) {
+                $grid->model()->company();
+            }
             $grid->column('id')->sortable();
             $grid->column('code');
-//            $grid->column('riscode');
             $grid->column('name');
             $grid->column('warehouseName');
             $grid->column('facadeShort')->sortable();
@@ -47,8 +48,8 @@ class ZtStoreController extends AdminController
                     1 => '正常',
                     2 => '闭店',
                 ]);
-                $selector->select('deptBigRegionName', '渠道', ZtDeptBigRegion::Company()->pluck('title', 'title'));
-                $selector->select('canalTypeName', '渠道', ZtCanalType::Company()->pluck('title', 'title'));
+                $selector->select('deptBigRegionName', '大区', ZtDeptBigRegion::Company()->pluck('title', 'title'));
+//                $selector->select('canalTypeName', '渠道', ZtCanalType::Company()->pluck('title', 'title'));
             });
             // 添加样式 字体大小
             $grid->addTableClass(['small']);

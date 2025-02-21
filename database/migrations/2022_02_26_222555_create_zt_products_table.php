@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('zt_products', function (Blueprint $table) {
             $table->id();
+//            $table->integer('zt_company_id')->comment('公司id');
             $table->string('title',50)->unique()->comment('型号');
             $table->string('model',20)->default('')->comment('型号简称');
             $table->integer('price')->default(0)->comment('商品价格');

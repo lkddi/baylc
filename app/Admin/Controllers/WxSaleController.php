@@ -47,7 +47,7 @@ class WxSaleController extends AdminController
     protected function grid()
     {
         return Grid::make(new WxSale(['store', 'wxuser', 'company','product','workuser']), function (Grid $grid) {
-            if (Admin::user()->id != 1) {
+            if (!Admin::user()->isAdministrator()) {
                 $grid->model()->company();
             }
             $grid->model()->orderBy('id', 'desc');
@@ -89,7 +89,7 @@ class WxSaleController extends AdminController
             $grid->selector(function (Grid\Tools\Selector $selector) {
                 if (Admin::user()->id ==1) $selector->select('zt_company_id', '分公司', \App\Models\ZtCompany::get()->pluck('name', 'id'));
 //                $selector->select('deptBigRegionName', '渠道', ZtDeptBigRegion::Company()->pluck('title', 'title'));
-                $selector->select('store.canalTypeName', '渠道', ZtCanalType::Company()->pluck('title', 'title'));
+//                $selector->select('store.canalTypeName', '渠道', ZtCanalType::Company()->pluck('title', 'title'));
             });
             //表格快捷搜索
             $grid->quickSearch(['store.name', 'product.model', 'wxuser.nickname', 'store.canalCategoryName', 'store.deptBigRegionName', 'store.retailName', 'store.nickname']);

@@ -30,12 +30,9 @@ class ZtStore extends Model
 
     public function scopeCompany($query)
     {
-        if (Admin::user()->id != 1) {
-            if (Admin::user()->isRole('chengdu')) {
-                return $query->where('zt_company_id', '2');
-            } elseif (Admin::user()->isRole('beijing')) {
-                return $query->where('zt_company_id', '1');
-            }
+        $user_company = checkAdminCompany();
+        if ($user_company != 1000) {
+            return $query->where('zt_company_id', $user_company);
         }
     }
 

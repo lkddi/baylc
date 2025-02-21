@@ -71,6 +71,10 @@ def login(login_user=None):
         password2 = '48efc4851e15940af5d477d3c0ce99211a70a3be'
         password1 = '5416d7cd6ef195a0f7622a9c56b55e84'
         COMPANY_ID = '0001A110000000001TUN'
+    if login_user == 2:
+        username = '18109260837'
+        password2 = '6200be8715b0eb80685b76a48170949abafd3a76'
+        password1 = 'f24e6413d826c8187d85752ec6120c94'
         # 1q2w3e4r
     # if login_user == 2:
     #     username = '18081058833'
@@ -224,7 +228,7 @@ def unix_time(dt):
 def wechatapi(data):
     send_message(data, 'wechat_1')
 
-    url = 'http://10.0.0.85:8080/api_send_message'
+    url = 'http://10.10.11.85:8080/api_send_message'
     datas = {
         'client_id': 1,
         'message_type': 11154,

@@ -26,7 +26,10 @@ class ImportProductModel implements ToModel, WithValidation, SkipsOnFailure
         if ($row[0] == '型号简称') {
             return null;
         }
-        $price = isset($row[2]) ? $row[2] : 0;
+        if ($row[0] == '简称') {
+            return null;
+        }
+        $price = $row[2] ?? 0;
         if ($row[2] == '') {
             $price = 0;
         }
@@ -57,8 +60,6 @@ class ImportProductModel implements ToModel, WithValidation, SkipsOnFailure
 
     public function onFailure(Failure ...$failures)
     {
-        // Handle the failures how you'd like.
-
         Log::channel('custom_daily')->info($failures);
     }
 

@@ -6,12 +6,41 @@
 
 use App\Models\WxGroup;
 use App\Models\WxUser;
+use App\Models\ZtCompany;
 use App\Services\QyWechatData;
 use Carbon\Carbon;
 
-function Bot_id()
+
+function checkAdminCompany()
 {
-    
+    if(Admin::user()->isAdministrator()){
+        return 10000;
+    }else{
+        $companies = ZtCompany::all();
+        if ($companies) {
+            foreach ($companies as $company) {
+                // 检查当前用户是否是指定公司的管理员，是则返回公司ID 并且跳出循环
+                if (Admin::user()->isRole($company->code)) {
+                    return $company->id;
+                }
+            }
+        }
+    }
+}
+
+/**
+ * 检查门店 id 是否存在
+ * @param $name
+ * @return bool
+ */
+function checkStoreCompany($name)
+{
+    $company = ZtCompany::where('title',$name)->first();
+    if ($company) {
+        return $company->id;
+    }else{
+        return false;
+    }
 }
 
 if (!function_exists('format_datetime')) {
@@ -38,7 +67,10 @@ function sendIyuu($text, $desp = null)
     QyWechatData::send_iyuu($text, $desp);
 }
 
-
+/**
+ * 检查是否是包含指定字符串
+ * @return void
+ */
 function checkAndPrepend($code, $num = 4, $prefix = '增加')
 {
     $parts = explode(' ', $code);
@@ -52,7 +84,6 @@ function checkAndPrepend($code, $num = 4, $prefix = '增加')
         return false;
     }
     return true;
-
 }
 
 
@@ -218,6 +249,8 @@ function formatTime($timevalue)
         return intval(($timevalue - 25569) * 3600 * 24 - 28800);
     }
 }
+
+
 
 /**
  * Created by PhpStorm.

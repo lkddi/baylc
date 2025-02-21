@@ -75,14 +75,17 @@ class ConsumeRabbitMQStore extends Command
     public function addData($data)
     {
         try {
-            echo $data['code'] . "\n";
+            $company  = checkStoreCompany($data['organizationName']);
+            if (!$company){
+                return false;
+            }
             ZtStore::updateOrCreate(
                 [
                     'code' => $data['code'],
-                    'zt_company_id' => $data['company']
                 ],
                 [
                     'name' => $data['name'],
+                    'zt_company_id' => $company,
                     'deptBigRegionName' => $data['deptBigRegionName'],
                     'deptBigRegionCode' => $data['deptBigRegionCode'],
                     'deptRegionName' => $data['deptRegionName'],
@@ -107,10 +110,10 @@ class ConsumeRabbitMQStore extends Command
                     'ext23' => $data['ext23'],
                 ]
             );
-            $this->createOrUpdateRegion(ZtDeptBigRegion::class, $data['deptBigRegionCode'], $data['deptBigRegionName'], $data['company']);
-            $this->createOrUpdateRegion(ZtDeptRegion::class, $data['deptRegionCode'], $data['deptRegionName'], $data['company']);
-            $this->createOrUpdateRegion(ZtRetail::class, $data['retailCode'], $data['retailName'], $data['company']);
-            $this->createOrUpdateRegion(ZtCanalType::class, $data['canalCategoryCode'], $data['canalCategoryName'], $data['company']);
+            $this->createOrUpdateRegion(ZtDeptBigRegion::class, $data['deptBigRegionCode'], $data['deptBigRegionName'], $company);
+            $this->createOrUpdateRegion(ZtDeptRegion::class, $data['deptRegionCode'], $data['deptRegionName'], $company);
+            $this->createOrUpdateRegion(ZtRetail::class, $data['retailCode'], $data['retailName'], $company);
+            $this->createOrUpdateRegion(ZtCanalType::class, $data['canalCategoryCode'], $data['canalCategoryName'], $company);
             return true;
         } catch (\Exception $e) {
             // 捕获异常并记录日志
@@ -130,5 +133,7 @@ class ConsumeRabbitMQStore extends Command
             Log::error('处理队列任务时发生异常：' . $e->getMessage());
         }
     }
+
+
 
 }

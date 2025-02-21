@@ -26,6 +26,10 @@ if __name__ == '__main__':
             # 登录
             userId = login(1)
             LOGIN_USER = 2
+        if first_arg == '2':
+            # 登录
+            userId = login(2)
+            LOGIN_USER = 3
 
     else:
         userId = login()

@@ -5,6 +5,7 @@ namespace App\Services\WeChatFerry;
 use App\Exceptions\WokeException;
 use App\Models\WxSale;
 use App\Models\WxWork;
+use App\Models\ZtGati;
 use App\Models\ZtProduct;
 use App\Models\ZtSale;
 use App\Models\ZtStore;
@@ -41,17 +42,21 @@ class AddSale
             $msg = '';
         }
         $group = $data['message_data']['conversation_id'];
+        $work = WxWork::where('roomid', $group)->first();
+        if ($work) {
+            $company_id = $work->zt_company_id;
+        }
         try {
-            $store = self::checkstore($storename);
+            $store = self::checkstore($storename, $company_id);
             if (!$store) {
                 $mess['send_user'] = 1;
-                $mess['data'] = $msg . '门店不存在:' . $storename . '登录系统后台查看门店清，或者联系管理员!！';
+                $mess['data'] = $msg . '门店不存在:' . $storename . ',登录系统后台查看门店清，或者联系管理员!！';
                 throw new WokeException('ok', $mess);
             }
             $models = self::checkmodel($model);
             if (!$models) {
                 $mess['send_user'] = 1;
-                $mess['data'] = $msg . '商品不存在:' . $model . '如果型号没有错误，那请联系管理增加型号';
+                $mess['data'] = $msg . '商品不存在:' . $model . ',如果型号没有错误，那请联系管理增加型号';
                 throw new WokeException('ok', $mess);
             }
 //            $num = is_numeric($remarkParts[3]) && $remarkParts[3] != 0 ? $remarkParts[3] : 1;
@@ -61,6 +66,20 @@ class AddSale
             } else {
                 $num = $remarkParts[3];
             }
+            // 获取今天的日期（无时间部分）
+            $today = Carbon::today();
+            $product = ZtGati::where('zt_product_id', $models->id)
+                ->where('zt_company_id', $store->zt_company_id)
+                ->where('starttime', '<=', $today)
+                ->where('endtime', '>=', $today)
+                ->first();
+            $amount = $remarkParts[2] ?? 0;
+            if ($product && $product->percentage) {
+                if ($product->percentage >= $amount) {
+                    $amount = $product->percentage;
+                }
+            }
+
             $wxSale = new WxSale();
             $wxSale->model = $models->title;
             $wxSale->zt_product_id = $models->id;
@@ -68,7 +87,7 @@ class AddSale
             $wxSale->zt_store_id = $store->id;
             $wxSale->zt_store_code = $store->code;
             $wxSale->quantity = $num;
-            $wxSale->amount = $remarkParts[2] ?? 0;
+            $wxSale->amount = $amount;
             $wxSale->price = $models->price;
             $wxSale->from_group = $group;
             $wxSale->from_wxid = $data['message_data']['sender'];
@@ -112,13 +131,15 @@ class AddSale
             $totalAmount = $salesData->total_amount;
 
             // 根据销售数量判断并生成消息
-            if ($salesData) {
-                $ss = PHP_EOL . "本月已经累计销售{$sales}台，累计获得红包{$totalAmount}元" . PHP_EOL;
+            $ss = '';
+            if ($salesData && $sales > 2) {
+                $ss = PHP_EOL . "本月已经累计销售{$sales}台" . PHP_EOL;
             }
 
             $company = $store->zt_company_id;
             $mess['send_user'] = 0;
-            $mess['data'] = $msg . "恭喜门店:" . $store->name . '(' . $storename . ') :' . PHP_EOL . '销售松下' . $models->title . ' ' . $num . '台，获得红包 ' . $remarkParts[2] * $num . '元!' . $ss . '大卖大卖大卖[庆祝]';
+//            $aa = '，获得红包 ' . $remarkParts[2] * $num . '元!';
+            $mess['data'] = $msg . "恭喜门店:" . $store->name . '(' . $storename . ') :' . PHP_EOL . '销售松下' . $models->title . ' ' . $num . '台' . $ss . '大卖大卖大卖[庆祝]';
             throw new WokeException('ok', $mess, $company);
         } catch (WokeException $e) {
             throw $e;
@@ -137,9 +158,10 @@ class AddSale
         }
     }
 
-    public static function checkstore($name)
+    public static function checkstore($name, $company_id)
     {
-        $models = ZtStore::where('nickname', $name)->first();
+        $models = ZtStore::where('zt_company_id', $company_id)
+            ->where('nickname', $name)->first();
         if ($models) {
             return $models;
         } else {

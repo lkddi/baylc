@@ -132,7 +132,7 @@ class WxWorkController extends AdminController
                     $mess = [
                         "guid" => $bot->clientId,
                         "conversation_id" => $wx['roomid'],
-                        "content" => '销售登记功能已经开启！！！我只是机器人，不会回答你任何问题！'
+                        "content" => '销售登记功能已经开启！！！我只负责销售登记工作，其他问题请联系对应业务经理。'
                     ];
                     QyWechatData::send_work_api($mess, '/msg/send_text');
                 }

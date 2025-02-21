@@ -18,4 +18,22 @@ class ZtGati extends Model
     {
         return $this->belongsTo(ZtProduct::class,'title','model');
     }
+
+    public function product()
+    {
+        return $this->belongsTo(ZtProduct::class,'zt_product_id','id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(ZtCompany::class,'zt_company_id','id');
+    }
+
+    public function scopeCompany($query)
+    {
+        $user_company = checkAdminCompany();
+        if ($user_company != 1000) {
+            return $query->where('zt_company_id', $user_company);
+        }
+    }
 }

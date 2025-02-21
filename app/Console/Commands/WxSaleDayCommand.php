@@ -45,6 +45,7 @@ class WxSaleDayCommand extends Command
         sleep(2);
         $this->newSalesModel(['成都金松苏宁零售云', '苏宁常规', '成都金松苏宁','苏宁零售云地采'], 'R:10914397865647530');
 
+        //  R:10786454862564692
     }
 
     public function newSales($categories, $to)

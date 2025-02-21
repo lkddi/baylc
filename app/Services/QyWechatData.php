@@ -62,29 +62,45 @@ class QyWechatData
         $mq->send($data);
     }
 
-    public static function send_work_join($url)
+    public static function send_work_join($client_id,$url)
     {
         $data = array();
-        $data['client_id'] = Cache::get('client_id');
+        $data['client_id'] = $client_id;
         $data['message_type'] = 11080;
         $data['params'] = [
             'invite_url' => $url,
         ];
-        $mq = new RabbitmqServer();
-        $mq->send($data);
+
+        $mess = [
+            "guid" => $client_id,
+            "invite_url" => $url
+        ];
+//        $mq = new RabbitmqServer();
+//        $mq->send($data);
+        self::send_work_api($mess, '/room/get_room_auto_accept');
+
     }
 
-    public static function send_work_add_friend($user_id, $corp_id)
+    public static function send_work_add_friend($client_id,$user_id, $corp_id)
     {
-        $data = array();
-        $data['client_id'] = Cache::get('client_id');
-        $data['message_type'] = 11064;
-        $data['params'] = [
+//        $data = array();
+//        $data['client_id'] = Cache::get('client_id');
+//        $data['message_type'] = 11064;
+//        $data['params'] = [
+//            'user_id' => $user_id,
+//            'corp_id' => $corp_id,
+//        ];
+//        $mq = new RabbitmqServer();
+//        $mq->send($data);
+
+        $mess = [
+            "guid" => $client_id,
             'user_id' => $user_id,
             'corp_id' => $corp_id,
         ];
-        $mq = new RabbitmqServer();
-        $mq->send($data);
+//        $mq = new RabbitmqServer();
+//        $mq->send($data);
+        self::send_work_api($mess, '/room/get_room_auto_accept');
     }
 
 
@@ -209,7 +225,7 @@ class QyWechatData
      */
     public static function sendSGHttp($datas, $method = 'get', $timeout = 3)
     {
-        $url = 'http://10.0.0.85:8080/api_send_message';
+        $url = 'http://10.10.11.22:8080/api_send_message';
         $curl = curl_init();
 
         curl_setopt($curl, CURLOPT_URL, $url);
@@ -268,12 +284,12 @@ class QyWechatData
     public static function send_work_api($data, $url)
     {
         try {
-            $api_url = 'http://10.0.0.130:8000' . $url;
+            $api_url = 'http://10.10.11.22:8000' . $url;
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
             ])->post($api_url, $data);
 //        Log::info($data);
-//        Log::info($response);
+        Log::info($response);
             $res = $response->json();
             if (!$res['status']) {
                 sleep(5);
@@ -295,7 +311,7 @@ class QyWechatData
 
     public static function send_work_api_return($data, $url)
     {
-            $url = 'http://10.0.0.130:8000' . $url;
+            $url = 'http://10.10.11.22:8000' . $url;
             $response = Http::withHeaders([
                 'Content-Type' => 'application/json',
             ])->post($url, $data);

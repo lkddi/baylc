@@ -15,7 +15,9 @@ return new class extends Migration
     {
         Schema::create('zt_companies', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 200)->comment('公司名称');
+            $table->string('name', 200)->comment('公司简称');
+            $table->string('code', 200)->comment('编码');
+            $table->string('title', 200)->comment('公司名称');
             $table->timestamps();
         });
     }

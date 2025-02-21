@@ -30,15 +30,17 @@ class ImportStoreModel implements ToModel, WithValidation, SkipsOnFailure
         if (!isset($row[0])) {
             return null;
         }
-        if ($row[0]=='终端编码'){
+        if ($row[0] == '终端编码') {
             return null;
         }
+
 //        Log::info($row);
-        $a = ZtStore::where('code', $row[0])->first();
-        if ($a){
+        $a = ZtStore::where('zt_company_id', $row[2])
+            ->where('code', $row[0])->first();
+        if ($a) {
             $a->nickname = $row[1];
             $a->save();
-        }else{
+        } else {
             Log::error('导入门店不存在');
             Log::error($row);
         }
@@ -46,12 +48,14 @@ class ImportStoreModel implements ToModel, WithValidation, SkipsOnFailure
 //        Log::info($a);
         return null;
     }
+
     public function rules(): array
     {
         // TODO: Implement rules() method.
         return [
             '0' => 'required',//日期
             '1' => 'required',//台数
+            '2' => 'required',//台数
 
         ];
     }

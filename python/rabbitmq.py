@@ -11,10 +11,10 @@ import time
 # PASSWORD = 'ddmabc123,./'
 # QUEUE_NAME = 'wechat'
 
-HOST = '10.10.11.30'
-PORT = 30672
-USERNAME = 'admin'
-PASSWORD = 'ddmabc123.'
+HOST = '10.10.11.7'
+PORT = 5672
+USERNAME = 'lkddi'
+PASSWORD = 'ddmabc123,./'
 QUEUE_NAME = 'wechat'
 
 class RabbitMQSender:
