@@ -29,5 +29,9 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
-
+    // 其他配置...
+    'api_gateway' => [
+        'url' => env('API_GATEWAY_URL'),
+        'token' => env('API_GATEWAY_TOKEN'),
+    ],
 ];

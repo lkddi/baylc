@@ -7,7 +7,7 @@ return [
     'fields' => [
         'wxid' => 'wxid',
         'title' => '群名',
-        'adminname' => '管理员',
+        'zt_company_id' => '公司',
         'user' => '登记用户',
         'ischeck' => '查库存',
         'isadd' => '红包登记',
@@ -15,6 +15,7 @@ return [
         'chat' => '记录聊天',
         'photo' => '下载图片',
         'kucun' => '减库存',
+        'nickname'=>'群昵称',
         'retailCode' => '片区编号',
         'admin'=>[
             'nickname'=>'管理员'

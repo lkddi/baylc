@@ -2,7 +2,10 @@
 
 namespace App\Admin\Grid\Tools;
 
+use App\Facades\ApiGateway;
+use App\Models\WechatBot;
 use App\Models\WxBot;
+use App\Models\WxGroup;
 use App\Servers\WxUserServer;
 use Dcat\Admin\Grid\Tools\AbstractTool;
 use Illuminate\Http\Request;
@@ -50,10 +53,26 @@ class WxGroupBotTool extends AbstractTool
     public function handle(Request $request)
     {
         // 你的代码逻辑
-        $groups = WxBot::where('online',1)->get();
+        $groups = WxGroup::with(['bot'])->get();
         if ($groups){
             foreach ($groups as $group){
-                WxUserServer::checkNew($group->wxid);
+                $request = ApiGateway::getChatroomInfo($group->bot->appid, $group->wxid);
+                if ($request['ret'] == 200){
+                    $group->update([
+                        'nickname'=>$request['data']['nickName']
+                    ]);
+                    if ($group->user) {
+                        foreach ($request['data']['memberList'] as $user) {
+                            $group->users()->updateOrCreate([
+                                'wxid' => $user['wxid'],
+//                                'zt_company_id' => $group->zt_company_id
+                            ], [
+                                'nickname' => $user['nickName']
+                            ]);
+                        }
+                    }
+
+                }
             }
         }
         return $this->response()->success('更新成功!')->refresh();

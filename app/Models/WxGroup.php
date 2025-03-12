@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
+use DB;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 
-/**
- * @method static wxid(mixed $from_group)
- */
 class WxGroup extends Model
 {
     use HasFactory;
@@ -39,10 +37,10 @@ class WxGroup extends Model
         return $this->belongsTo(ZtDeptBigRegion::class);
     }
 
-    public function admin()
-    {
-        return $this->belongsTo(WxUser::class, 'admin_wxid', 'wxid');
-    }
+//    public function admin()
+//    {
+//        return $this->belongsTo(WxUser::class, 'admin_wxid', 'wxid');
+//    }
 
     public function scopeWxid($query, $wxid)
     {
@@ -50,6 +48,29 @@ class WxGroup extends Model
     }
     public function bot()
     {
-        return $this->belongsTo(WxBot::class,'robot_wxid','wxid');
+        return $this->belongsTo(WechatBot::class,'robot_wxid','wxid');
     }
+
+    public function company()
+    {
+        return $this->belongsTo(ZtCompany::class, 'zt_company_id','id');
+    }
+
+
+
+    public function users(){
+        return $this->hasMany(WxUser::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::deleting(function ($group) {
+            // 使用事务确保数据一致性
+            DB::transaction(function () use ($group) {
+                $group->users()->delete(); // 删除所有关联用户
+            });
+        });
+    }
+
 }

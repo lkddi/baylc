@@ -34,6 +34,10 @@ use Illuminate\Support\Facades\Route;
 Route::any('wechat/vlw',[VlwController::class,'api']);
 Route::any('wechat/qx',[QxController::class,'api']);
 
+// Gewe
+Route::any('receive', 'App\Http\Controllers\Api\BotController@receive');
+
+
 Route::any('wechat/wcf',[WeChatController::class,'api']);
 
 Route::post('qywechat',[WeChatController::class,'QyWchat']);
@@ -108,6 +112,6 @@ Route::post('product/add',[ProductController::class,'create']);
 Route::get('store',[StoreController::class,'index']);
 Route::post('store',[StoreController::class,'save']);
 
-Route::apiResource('bot',BotController::class);
+//Route::apiResource('bot',BotController::class);
 
 

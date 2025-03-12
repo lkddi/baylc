@@ -71,16 +71,16 @@ class OtherMessageHandler implements MessageHandlerInterface
         } elseif ($message['message_type'] == '11047') {//自动加群
             $bot = WxBot::where('wxid', $message['message_data']['receiver'])->first();
             if ($bot) {
-//                if ($bot->group) {
-//                    QyWechatData::send_work_join($message['client_id'], $message['message_data']['url']);
-//                }
+                if ($bot->group) {
+                    QyWechatData::send_work_join($message['client_id'], $message['message_data']['url']);
+                }
             }
 
         } elseif ($message['message_type'] == '11063') {
             $bot = WxBot::where('clientId', $message['client_id'])->first();
             if ($bot) {
 //                if ($bot->friend) {
-//                    QyWechatData::send_work_add_friend($message['client_id'],$message['message_data']['user_id'], $bot->wxid);
+                    QyWechatData::send_work_add_friend($message['client_id'],$message['message_data']['user_id'], $bot->wxid);
 //                }
             }
         } elseif ($message['message_type'] == '11072') {

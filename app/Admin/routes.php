@@ -5,6 +5,7 @@ use App\Admin\Controllers\InventoryLogController;
 use App\Admin\Controllers\NccSaleController;
 use App\Admin\Controllers\StockPileController;
 use App\Admin\Controllers\WarehouseController;
+use App\Admin\Controllers\WechatBotController;
 use App\Admin\Controllers\WokeApiController;
 use App\Admin\Controllers\WxbotController;
 use App\Admin\Controllers\WxForwardController;
@@ -43,6 +44,7 @@ Route::group([
     $router->get('/', 'HomeController@index');
     $router->resources([
         'wxbot' => WxbotController::class,
+        'wechat-bot'=> WechatBotController::class,
         'product' => ZtProductController::class,
         'StoreHouse' => ZtStoreController::class,
         'StockPile' => StockPileController::class,

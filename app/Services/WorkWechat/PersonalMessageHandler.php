@@ -39,7 +39,7 @@ class PersonalMessageHandler implements MessageHandlerInterface
                 }
 
                 // 手动增加销售
-                if ($group['isadd']) {
+                if ($group['isadd'] ) {  //&& $group['manualControl']
                     if (checkAndPrepend($content, 4, '增加')) {
                         $title = str_replace('增加 ', '', $content);
                         $x = explode(' ', $title);

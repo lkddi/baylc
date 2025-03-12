@@ -5,10 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
-/**
- * @mixin IdeHelperWxUser
- * @property int|mixed $zt_store_code
- */
 class WxUser extends Model
 {
     use HasFactory;
@@ -21,13 +17,14 @@ class WxUser extends Model
 
     public function group()
     {
-        return $this->belongsTo(WxGroup::class, 'group_wxid', 'wxid');
+        return $this->belongsTo(WxGroup::class,'wx_group_id','id');
     }
+
 
     public function store()
     {
 //        return $this->belongsTo(ZtStore::class,'code','zt_store_code');
-        return $this->belongsTo(ZtStore::class,'zt_store_code','code');
+        return $this->belongsTo(ZtStore::class,'zt_store_id','id');
     }
 
     public function scopeWxid($query,$wxid,$group)

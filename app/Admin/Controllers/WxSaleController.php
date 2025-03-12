@@ -108,7 +108,7 @@ class WxSaleController extends AdminController
                 $filter->equal('store.deptBigRegionName', '大区')->select(ZtDeptBigRegion::Company()->pluck('title', 'title'));
                 $filter->equal('store.deptRegionName', '地区')->select(ZtDeptRegion::Company()->pluck('title', 'title'));
                 $filter->equal('store.retailName', '片区')->select(ZtRetail::Company()->pluck('title', 'title'));
-//                $filter->in('store.canalCategoryName')->multipleSelectTable(ZtCanalType::Company()->pluck('title', 'title'));
+                $filter->equal('store.canalCategoryName','渠道')->select(ZtCanalType::Company()->pluck('title', 'title'));
                 $filter->equal('zt_product_id', '型号')->select(ZtProduct::get()->pluck('title', 'id'));
 //                $filter->in('zt_product_id', '型号')->multipleSelectTable(['key' => 'value']);
                 $filter->whereBetween('created_at', function ($q) {

@@ -29,6 +29,35 @@ function checkAdminCompany()
 }
 
 /**
+ * @param string $content
+ * @return string
+ * 'PushContent' => '【京东家电】80521北京延庆~宋英涛在群聊中发了一张图片', 我要的结果是：京东家电】80521北京延庆~宋英涛
+ * 'PushContent' => '王刚+杭州+72+司令部在群聊中发了一个表情',我要的结果是：王刚+杭州+72+司令部
+ * 'PushContent' => '王岚 : @【京东家电】80521北京延庆~宋英涛 [强][强]',我要的结果是：王岚
+ * 'PushContent' => '王岚 : [转账]',我要的结果是：王岚
+ * 'PushContent' => '松下洗衣机李波 : @【京东家电】80521北京延庆~宋英涛 [强][强][强]加油',我要的结果是：
+ * 'PushContent' => '【京东家电】80521北京延庆~宋英涛 : [转账]',我要的结果是：【京东家电】80521北京延庆~宋英涛
+ * 'PushContent' => '【京东家电】燕水佳园店~月超在群聊中发了一张图片',我要的结果是：【京东家电】燕水佳园店~月超
+ */
+function extractContentUser(string $content): string
+{
+    // 定义优先级从高到低的分隔符
+    $delimiters = [
+        '在群聊中',  // 案例1、2、7
+        ' : [',      // 案例4、6
+        '分享了一个地理位置',      // 案例3、5
+        ' : ',       // 通用冒号场景
+    ];
+
+    foreach ($delimiters as $delimiter) {
+        if (Str::contains($content, $delimiter)) {
+            return trim(Str::before($content, $delimiter));
+        }
+    }
+
+    return $content; // 无匹配分隔符时返回原内容
+}
+/**
  * 检查门店 id 是否存在
  * @param $name
  * @return bool

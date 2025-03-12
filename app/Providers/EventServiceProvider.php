@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\AddMsgEvent;
+use App\Events\FinanceEvent;
+use App\Events\OfflineEvent;
+use App\Listeners\AddMsgEventListener;
+use App\Listeners\FinanceEventListener;
+use App\Listeners\OfflineEventListener;
 use App\Models\WxSale;
 use App\Models\ZtSale;
 use App\Observers\WxSaleObserver;
@@ -27,6 +33,15 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\ZtStoreUpdated::class => [
             \App\Listeners\ZtStoreCacheUpdater::class,
         ],
+        OfflineEvent::class => [
+            OfflineEventListener::class,
+        ],
+        AddMsgEvent::class=>[
+            AddMsgEventListener::class,
+        ],
+        FinanceEvent::class=>[
+            FinanceEventListener::class,
+        ]
     ];
 
     /**

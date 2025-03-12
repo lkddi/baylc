@@ -192,8 +192,10 @@ return [
     |
     */
 
-    'aliases' => Facade::defaultAliases()->merge([
-        // ...
+//    'aliases' => Facade::defaultAliases()->merge([
+//        // ...
+//    ])->toArray(),
+    'aliases' => \Illuminate\Support\Facades\Facade::defaultAliases()->merge([
+        'ApiGateway' => App\Facades\ApiGateway::class,
     ])->toArray(),
-
 ];

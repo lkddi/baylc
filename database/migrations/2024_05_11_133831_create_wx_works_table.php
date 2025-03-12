@@ -26,6 +26,7 @@ return new class extends Migration
             $table->integer('photo')->default(0)->comment('是否保存图片');
             $table->integer('kucun')->default(0)->comment('是否减库存');
             $table->tinyInteger('ai')->default(0)->comment('是否ai');
+            $table->tinyInteger('manualControl')->default(0)->comment('手动增加');
 //            $table->string('retailCode')->nullable()->comment('片区id');
 //            $table->string('retailName')->nullable()->comment('片区');
 //            $table->string('deptRegionCode')->nullable()->comment('地区id');

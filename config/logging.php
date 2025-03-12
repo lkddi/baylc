@@ -77,6 +77,12 @@ return [
             'level' => 'debug',
             'days' => 14,
         ],
+        'gewe_daily' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/gewe_{date}.log'),
+            'level' => 'debug',
+            'days' => 14,
+        ],
 
         'slack' => [
             'driver' => 'slack',

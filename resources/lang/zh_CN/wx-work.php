@@ -15,6 +15,7 @@ return [
         'chat' => '记录聊天',
         'photo' => '下载图片',
         'kucun' => '减库存',
+        'manualControl' => '手动增加',
         'retailCode' => '片区编号',
         'admin'=>[
             'nickname'=>'管理员'

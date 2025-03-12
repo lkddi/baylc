@@ -77,7 +77,7 @@ class QyWechatData
         ];
 //        $mq = new RabbitmqServer();
 //        $mq->send($data);
-        self::send_work_api($mess, '/room/get_room_auto_accept');
+        self::send_work_api($mess, '/room/set_room_auto_accept');
 
     }
 
@@ -100,7 +100,7 @@ class QyWechatData
         ];
 //        $mq = new RabbitmqServer();
 //        $mq->send($data);
-        self::send_work_api($mess, '/room/get_room_auto_accept');
+        self::send_work_api($mess, '/room/set_friend_accept');
     }
 
 

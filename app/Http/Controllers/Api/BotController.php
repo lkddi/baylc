@@ -2,65 +2,38 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\AddMsgEvent;
+use App\Events\OfflineEvent;
 use App\Http\Controllers\Controller;
 use App\Models\WxBot;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 
 class BotController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $bots = WxBot::get();
-        return $this->success(data: $bots);
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function receive(Request $request)
     {
-        //
-    }
+        $message = $request->all();
+        Log::channel('gewe_daily')->info($message);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
+        if(!isset($message['TypeName'])){
+            return response()->json(['status' => 'success']);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
+        switch ($message['TypeName']) {
+            case 'Offline': // 掉线通知
+                Event::dispatch(new OfflineEvent($message));
+                break;
+//            case 'DelContacts':
+//                Event::dispatch(new DelContactsEvent($message));
+//                break;
+            case 'AddMsg';
+                Event::dispatch(new AddMsgEvent($message));
+                break;
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+            default:
+        }
     }
 }

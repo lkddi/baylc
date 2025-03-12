@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
             # print("采集到门店信息:{}".format(len(c["content"]["id"])))
             # 创建一个新的线程池来发送消息
-            with ThreadPoolExecutor(max_workers=MAX_WORKERS) as send_executor:
+            with ThreadPoolExecutor(max_worke  rs=MAX_WORKERS) as send_executor:
                 send_futures = [send_executor.submit(send_store_message, a) for a in c["content"]]
                 all_send_futures.extend(send_futures)
 

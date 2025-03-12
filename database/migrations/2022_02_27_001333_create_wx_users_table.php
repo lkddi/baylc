@@ -18,10 +18,10 @@ return new class extends Migration
             $table->string('name',20)->nullable()->comment('真实姓名');
             $table->string('nickname',30)->default('')->comment('名字');
             $table->string('wxid',50)->default('')->comment('WxId');
-            $table->string('group_wxid',50)->default('')->comment('group_wxid');
-            $table->string('zt_store_code')->default(0)->comment('门店id');
+            $table->unsignedBigInteger('wx_group_id')->nullable()->comment('group_wxid');
+            $table->unsignedBigInteger('zt_store_id')->nullable()->comment('门店id');
             $table->unsignedTinyInteger('nostoremsg')->nullable()->comment('门店绑定不提醒');
-
+            $table->tinyInteger('admin')->default(0)->comment('群管');
             $table->timestamps();
         });
     }

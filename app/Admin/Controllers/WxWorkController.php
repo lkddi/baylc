@@ -31,19 +31,20 @@ class WxWorkController extends AdminController
             $grid->addTableClass(['small']);
 
             $grid->model()->orderBy('retailCode', 'desc');
-            if (Admin::user()->id ==1) $grid->column('zt_company_id')->select(ZtCompany::get()->pluck('name', 'id'));
+            if (Admin::user()->id ==1) $grid->column('zt_company_id')->select(array_merge([0 => '无'], ZtCompany::get()->pluck('name', 'id')->toArray()),true);
             $grid->column('roomid');
             $grid->column('roomname');//->editable()
             $grid->column('total');//->editable()
 //            if (Admin::user()->id ==1) $grid->column('company.name');
             $grid->column('user')->switch();
-            $grid->column('photo')->switch();
+//            $grid->column('photo')->switch();
 //            $grid->column('advance')->switch();
             $grid->column('ischeck')->switch();
             $grid->column('isadd')->switch();
 //            $grid->column('chat')->switch();
             $grid->column('kucun')->switch();
             $grid->column('ai')->switch();
+            $grid->column('manualControl')->switch();
 //            $grid->column('new')->switch();
             $grid->column('updated_at')->sortable();
             $grid->disableCreateButton();

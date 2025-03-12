@@ -133,13 +133,13 @@ class AddSale
             // 根据销售数量判断并生成消息
             $ss = '';
             if ($salesData && $sales > 2) {
-                $ss = PHP_EOL . "本月已经累计销售{$sales}台" . PHP_EOL;
+                $ss =  "本月已经累计销售{$sales}台" . PHP_EOL;
             }
 
             $company = $store->zt_company_id;
             $mess['send_user'] = 0;
 //            $aa = '，获得红包 ' . $remarkParts[2] * $num . '元!';
-            $mess['data'] = $msg . "恭喜门店:" . $store->name . '(' . $storename . ') :' . PHP_EOL . '销售松下' . $models->title . ' ' . $num . '台' . $ss . '大卖大卖大卖[庆祝]';
+            $mess['data'] = $msg . "恭喜门店:" . $store->name . '(' . $storename . ') :' . PHP_EOL . '销售松下' . $models->title . ' ' . $num . '台' . PHP_EOL. $ss . '大卖大卖大卖[庆祝]';
             throw new WokeException('ok', $mess, $company);
         } catch (WokeException $e) {
             throw $e;
