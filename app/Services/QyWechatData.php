@@ -29,7 +29,7 @@ class QyWechatData
     public static function send_text_msg($to_wxid, $msg, $company_id = 2)
     {
 // 封装返回数据结构
-        $data = array();
+        $data = [];
         $data['client_id'] = Cache::get('client_id');
         $data['message_type'] = 11029;             // Api数值（可以参考 - api列表demo）
         $data['params'] = [
@@ -51,7 +51,7 @@ class QyWechatData
 
     public static function send_mq_msg($to_wxid, $msg)
     {
-        $data = array();
+        $data = [];
         $data['client_id'] = Cache::get('client_id');
         $data['message_type'] = 11029;             // Api数值（可以参考 - api列表demo）
         $data['params'] = [
@@ -64,7 +64,7 @@ class QyWechatData
 
     public static function send_work_join($client_id,$url)
     {
-        $data = array();
+        $data = [];
         $data['client_id'] = $client_id;
         $data['message_type'] = 11080;
         $data['params'] = [
@@ -112,7 +112,7 @@ class QyWechatData
      */
     public static function get_inner_contacts()
     {
-        $data = array();
+        $data = [];
         $data['client_id'] = Cache::get('client_id');
         $data['message_type'] = 11036;
         $data['params'] = [
@@ -131,7 +131,7 @@ class QyWechatData
      */
     public static function get_external_contacts()
     {
-        $data = array();
+        $data = [];
         $data['client_id'] = Cache::get('client_id');
         $data['message_type'] = 11037;
         $data['params'] = [
@@ -145,7 +145,7 @@ class QyWechatData
 
     public static function get_rooms()
     {
-        $data = array();
+        $data = [];
         $data['client_id'] = Cache::get('client_id');
         $data['message_type'] = 11038;
         $data['params'] = [
@@ -163,7 +163,7 @@ class QyWechatData
      */
     public static function login()
     {
-        $data = array();
+        $data = [];
         $data['guid'] = 'string';
         $data['smart'] = true;
         $data['show_login_qrcode'] = false;
@@ -179,7 +179,7 @@ class QyWechatData
     public static function down_img($msg)
     {
         // 封装返回数据结构
-        $data = array();
+        $data = [];
         $data['client_id'] = Cache::get('client_id');
         $data['message_type'] = 11171;             // Api数值（可以参考 - api列表demo）
         $data['params'] = [
@@ -195,7 +195,7 @@ class QyWechatData
     public static function send_room($roomid)
     {
         // 封装返回数据结构
-        $data = array();
+        $data = [];
         $data['client_id'] = Cache::get('client_id');
         $data['message_type'] = 11134;
         $data['params'] = [
@@ -208,7 +208,7 @@ class QyWechatData
     public static function send($type, $datas)
     {
         // 封装返回数据结构
-        $data = array();
+        $data = [];
         $data['client_id'] = Cache::get('client_id');
         $data['message_type'] = $type;
         $data['params'] = $datas;
@@ -231,7 +231,7 @@ class QyWechatData
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_POST, true);//post提交方式
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($datas));//设置传送的参数
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);//要求结果为字符串且输出到屏幕上
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, $timeout);//设置等待时间
         $res = curl_exec($curl);//运行curl
@@ -251,7 +251,7 @@ class QyWechatData
     public static function send_iyuu($text, $dest = null)
     {
         $url = 'https://iyuu.cn/IYUU38224Tb93f646871572f33ab03859063db6b03f5609534.send';
-        $data = array();
+        $data = [];
         $data['text'] = $text;
         $data['dest'] = $dest;
         $response = Http::get($url, $data);

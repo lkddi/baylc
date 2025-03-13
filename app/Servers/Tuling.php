@@ -19,10 +19,10 @@ class Tuling
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode( $datas));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
                 'Content-Type: application/json; charset=utf-8',
                 'Content-Length: ' . strlen(json_encode( $datas))
-            )
+            ]
         );
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
